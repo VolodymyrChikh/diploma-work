@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Chatroom</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #chatroom {
+            width: 50%;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        #messages {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fafafa;
+            border-radius: 4px;
+        }
+
+        #message-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chatroom">
+    <h1>Chatroom</h1>
+    <h3 id="username-display">Loading...</h3> <!-- Display Username -->
+    <div id="messages"></div>
+    <input type="text" id="message-input" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+    let stompClient = null;
+    let username = "Guest"; // Default username
+
+    async function getAuthenticatedUser() {
+        const token = localStorage.getItem("jwt");
+        if (!token) {
+            console.warn("No JWT token found! Using random username.");
+            username = generateRandomUsername();
+            updateUsernameDisplay();
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:9000/users/me", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+
+            const data = await response.json();
+            username = data.username || generateRandomUsername();
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            username = generateRandomUsername(); // Fallback to random username
+        }
+
+        updateUsernameDisplay();
+    }
+
+    function updateUsernameDisplay() {
+        document.getElementById("username-display").innerText = `Username: ${username}`;
+    }
+
+    function generateRandomUsername() {
+        const adjectives = ["Quick", "Lazy", "Happy", "Clever", "Brave"];
+        const nouns = ["Fox", "Dog", "Cat", "Mouse", "Bear"];
+        const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const noun = nouns[Math.floor(Math.random() * nouns.length)];
+        return adjective + noun + Math.floor(Math.random() * 1000);
+    }
+
+    function connect() {
+        const socket = new SockJS('http://localhost:9000/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/messages', function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+        });
+    }
+
+    function sendMessage() {
+        var messageContent = document.getElementById('message-input').value.trim();
+        if (!messageContent) return;
+
+        if (!stompClient || !stompClient.connected) {
+            console.error("Not connected to WebSocket!");
+            return;
+        }
+
+        stompClient.send("/app/chat", {}, JSON.stringify({
+            'username': username,
+            'content': messageContent
+        }));
+
+        document.getElementById('message-input').value = '';
+    }
+
+    function showMessage(message) {
+        var messagesDiv = document.getElementById('messages');
+        var messageElement = document.createElement('div');
+        messageElement.classList.add("message");
+        messageElement.textContent = message.username + ": " + message.content;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to latest message
+    }
+
+    getAuthenticatedUser(); // Fetch username before connecting
+    connect();
+
+</script>
+</body>
+</html>

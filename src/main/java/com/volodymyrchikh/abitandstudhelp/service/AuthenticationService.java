@@ -1,0 +1,81 @@
+package com.volodymyrchikh.abitandstudhelp.service;
+
+import com.volodymyrchikh.abitandstudhelp.domain.User;
+import com.volodymyrchikh.abitandstudhelp.dto.AuthenticationRequest;
+import com.volodymyrchikh.abitandstudhelp.dto.AuthenticationResponse;
+import com.volodymyrchikh.abitandstudhelp.dto.RegisterRequest;
+import com.volodymyrchikh.abitandstudhelp.dto.TokenResponse;
+import com.volodymyrchikh.abitandstudhelp.exception.*;
+import com.volodymyrchikh.abitandstudhelp.mapper.UserMapper;
+import com.volodymyrchikh.abitandstudhelp.security.UsersDetails;
+import com.volodymyrchikh.abitandstudhelp.security.auth.JwtService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class AuthenticationService {
+
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final UserMapper userMapper;
+    private final UserService userService;
+
+    @Transactional
+    public AuthenticationResponse register(RegisterRequest registerRequest) {
+        userService.findUserByEmail(registerRequest.getEmail())
+                .ifPresent(user -> {
+                    throw new EmailIsAlreadyUsed("Email=[%s] is already used"
+                            .formatted(registerRequest.getEmail()), registerRequest.getEmail());
+                });
+        User savedUser = userService.save(registerRequest);
+
+        TokenResponse tokenResponse = getTokenResponse(savedUser);
+        return new AuthenticationResponse(userMapper.mapToResponse(savedUser), tokenResponse);
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        User user = userService.findUserByEmail(request.getEmail()).orElseThrow(() ->
+                new UserNotFoundException("User with email=[%s] not found".formatted(request.getEmail()), request.getEmail()));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new WrongCredentialsException("Incorrect password", "Email or password is incorrect");
+        }
+
+        TokenResponse tokenResponse = getTokenResponse(user);
+        return new AuthenticationResponse(userMapper.mapToResponse(user), tokenResponse);
+    }
+
+    private void checkIfUserAlreadyExists(RegisterRequest registerRequest) {
+        List<FieldAlreadyUsedException> validationErrors = new ArrayList<>();
+
+        userService.findUserByEmail(registerRequest.getEmail())
+                .ifPresent(user -> validationErrors.add(new FieldAlreadyUsedException(registerRequest.getEmail(),
+                        "Email is already used")));
+
+        if (!validationErrors.isEmpty()) {
+            throw new FieldAlreadyUsedExceptions(validationErrors);
+        }
+    }
+
+    private TokenResponse getTokenResponse(User user) {
+        UsersDetails userDetails = new UsersDetails(user);
+        var jwtToken = jwtService.generateToken(userDetails);
+        long currentTime = System.currentTimeMillis();
+        long expirationTime = currentTime + (1000 * 60 * 60 * 24);
+
+        String refreshToken = getRefreshToken(user);
+        return new TokenResponse(jwtToken, currentTime, expirationTime, refreshToken);
+    }
+
+    private String getRefreshToken(User user) {
+        UsersDetails userDetails = new UsersDetails(user);
+        return jwtService.generateRefreshToken(userDetails);
+    }
+
+}

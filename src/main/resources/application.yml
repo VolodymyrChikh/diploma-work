@@ -1,0 +1,25 @@
+server:
+  port: ${PORT:9000}
+
+spring:
+  application:
+    name: abitandstudhelp-service
+  profiles:
+    active:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/course-work?currentSchema=public}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:root}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
+    default-schema: public
+jwt:
+  secret-key: Zxo6NYNCLi8Eeyzw3wWAVH46yg6G2lLLJdaOF6aXie4VvXm2wKWa6AdCKG8QdaTnTHSfrXb9RrEbxwe+FkE7Tw/kuwLu/YaJFRN4L1XeeGckjq9VyfK+cFsimQPyLCDfEbZejHYm0e3F1QY5kn5jytsnlpHfmL1BMgt4e0DqYT+OeDKCs/3KdbeyizI7C8t0RliXJiKkyJIG3dM2q24KpmYzpF5emC30AL2io35SL1c5eVresAnZNGIVUqWzOummF8pRX7hOfVCwc8DzlhAUvjJozsx/rZy21y5Bdk6ina68XRgnr2eMcTJb8Df8Z35QsJSnqjrN+taBUrXYeR7fFp01YNFHM/VA4saEVIQRtnvR5a0fRqnKK3er9EBPxcK53DKdWhDkWfKI+Xh3E89Q4N6RlcAH9XgRCecOI8odtqhKqnUmlLG8F1SabUr2tqVpYWXIrBgG1ca0u1Sf/VV3PzzncA6BKpShJLW3rNAI5ttWTYaHRLvh8veqIRvcpa19Sz829Yr9eMjzb4tzZSGPw89LUerHquhmaDJMhBBQfHafRda1Ox5nbIiikEpGGqvPJURlUkuplsOGMFpXZEwHH/jvI/f80Uf1tcSLkv0rsIqEfIjOhUJsx6crgUcKJHeDvhF/lTuKWsxWbQhPjiFn+eub9XIcLcx//+pHrmhqkdaaa3rd0iw3yoRczwrsgzKI
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
