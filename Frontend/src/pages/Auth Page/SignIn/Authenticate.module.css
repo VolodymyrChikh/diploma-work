@@ -1,0 +1,199 @@
+.authPopup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #9b4d57;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: 'Fixel', sans-serif;
+}
+
+.formTitle {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333333;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  width: 400px;
+}
+
+.errorMessage {
+  background-color: #ffeeee;
+  border: 1px solid #ff6b6b;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.input {
+  width: 100%;
+  font-size: 16px;
+  padding: 0rem 1rem;
+  border: 1px solid #c7bfbf;
+  border-radius: 4px;
+  outline: none;
+  font-family: 'Fixel', sans-serif;
+  box-sizing: border-box; 
+}
+
+.input:focus {
+  border-color: #9b4d57;
+}
+
+.button {
+  background-color: #9b4d57;
+  padding: 12px 20px;
+  width: 100%;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  font-family: 'Fixel', sans-serif;
+  box-sizing: border-box;
+}
+
+.button:hover {
+  background-color: #7a3a45;
+}
+
+.links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.forgotPassword {
+  font-size: 14px;
+  color: #9b4d57;
+  text-decoration: none;
+  margin-top: -10px;
+}
+
+.forgotPassword:hover {
+  text-decoration: underline;
+}
+
+.singUp{
+    font-size: 14px;
+    color: #9b4d57;
+    text-decoration: none;
+    margin-top: -10px;
+}
+
+.singUp:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 20px;
+  }
+
+  .formTitle {
+    font-size: 24px;
+  }
+
+  .form {
+    gap: 15px;
+    max-width: 90%;
+  }
+
+  .input {
+    font-size: 14px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  .button {
+    font-size: 16px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .links {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .forgotPassword,
+  .singUp {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .formContainer {
+    padding: 15px;
+  }
+
+  .formTitle {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+
+  .form {
+    gap: 12px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .input {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .button {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .formTitle {
+    font-size: 20px;
+  }
+  
+  .form {
+    gap: 10px;
+  }
+  
+  .input, .button {
+    font-size: 12px;
+  }
+}

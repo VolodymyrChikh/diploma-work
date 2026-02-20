@@ -1,0 +1,371 @@
+@font-face {
+  font-family: 'Fixel';
+  src: url('../../assets/fonts/FixelText-Regular.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.forumPostsContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 0 4rem;
+    position: relative;
+  }
+
+.forumPost {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem;
+    border-bottom: 0.5px solid #9e9ea7;
+    border-radius: 10px;
+  }
+ 
+.clickable {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+.clickable:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .forumPostHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+  }
+
+  .userAvatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #9e9ea7;
+    object-fit: cover;
+  }  
+  
+  .anonymousAvatar {
+    filter: grayscale(100%);
+  }
+  
+  .userInfo {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .userDetails {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'Fixel', sans-serif;
+  }
+  
+  .userName {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .userGroup, .postTime {
+    color: rgba(51, 51, 51, 0.65);
+  }
+  
+  .postOptions {
+    cursor: pointer;
+    font-family: 'Fixel', sans-serif;
+    position: relative;
+  }
+  
+  .dotsMenu {
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 150px;
+  }
+  
+  .deleteButton {
+    width: 100%;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: 'Fixel', sans-serif;
+    color: #dc3545;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .deleteButton:hover {
+    background-color: #ffebee;
+  }
+
+  .categoryTag {
+    background-color: #9e9ea7;
+    color: #ffffff;
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    width: fit-content;
+  }
+
+  .forumPostBody {
+    cursor: pointer;
+    padding-bottom: 12px;
+  }
+  
+  .forumPostTitle {
+    font-family: 'Fixel', sans-serif;
+    font-size: 24px;
+    color: #000;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .forumPostContent {
+    font-family: 'Fixel', sans-serif;
+    font-size: 16px;
+    color: rgba(30, 30, 30, 0.76);
+    margin-bottom: 10px;
+  }
+  
+  .forumPostFooter {
+    border-top: 1px solid rgba(158, 158, 167, 0.2);
+    padding-top: 10px;
+    margin-top: 5px;
+  }
+  
+  .postStats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;  
+  }
+  
+  .likesContainer, .commentsContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Fixel', sans-serif;
+    font-size: 16px;
+    color: rgba(51, 51, 51, 0.65);  }
+
+  .like {
+    cursor: pointer;
+  }
+
+  .likeButton {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.likeButton:hover {
+    transform: scale(1.1);
+    background-color: rgba(155, 77, 87, 0.1);
+}
+
+.likeButton:active {
+    transform: scale(0.95);
+}
+
+.likeButton svg {
+    transition: all 0.2s ease;
+}
+
+.likeButton.liked:hover {
+    background-color: rgba(155, 77, 87, 0.15);
+}
+
+.likesCount {
+    transition: color 0.2s ease;
+}
+
+.likesCount.liked {
+    color: #9B4D57;
+}
+
+@keyframes likeAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.likeButton:active svg {
+    animation: likeAnimation 0.3s ease;
+}
+
+  .lastCommentContainer {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background-color: rgba(155, 77, 87, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid rgba(155, 77, 87, 0.6);
+    transition: all 0.2s ease;
+  }
+  
+  .lastCommentContainer:hover {
+    background-color: rgba(155, 77, 87, 0.08);
+    border-left: 3px solid rgba(155, 77, 87, 0.8);
+  }
+  
+  .lastCommentHeader {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(155, 77, 87, 0.15);
+  }
+  
+  .lastCommentTitle {
+    margin: 0;
+    font-family: 'Fixel', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(155, 77, 87, 0.9);
+  }
+  
+  .lastCommentTime {
+    font-family: 'Fixel', sans-serif;
+    font-size: 12px;
+    color: rgba(51, 51, 51, 0.65);
+  }
+  
+  .lastCommentContent {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .commentAvatarContainer {
+    flex-shrink: 0;
+  }
+  
+  .commentAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+  
+  .commentTextContainer {
+    flex-grow: 1;
+    overflow: hidden;
+  }
+  
+  .commentAuthor {
+    display: block;
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+  }
+  
+  .commentText {
+    margin: 0;
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    color: rgba(51, 51, 51, 0.85);
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  @media (max-width: 992px) {
+    .forumPostsContainer {
+      padding: 0 3rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .forumPostsContainer {
+      padding: 0 2rem;
+    }
+    
+    .forumPost {
+      padding: 0.8rem 1.5rem;
+    }
+    
+    .forumPostTitle {
+      font-size: 20px;
+    }
+    
+    .forumPostContent {
+      font-size: 14px;
+    }
+    
+    .lastCommentContainer {
+      padding: 10px;
+      margin-top: 12px;
+    }
+    
+    .lastCommentTitle {
+      font-size: 14px;
+    }
+    
+    .commentText {
+      font-size: 13px;
+    }
+    
+    .commentAvatar {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .likesContainer, .commentsContainer {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .forumPostsContainer {
+      padding: 0 1rem;
+    }
+    
+    .forumPost {
+      padding: 0.6rem 1rem;
+    }
+    
+    .forumPostTitle {
+      font-size: 18px;
+    }
+    
+    .lastCommentHeader {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    
+    .userAvatar {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .userInfo {
+      gap: 0.8rem;
+    }
+    
+    .userDetails {
+      gap: 0.5rem;
+      font-size: 14px;
+    }
+  }

@@ -1,0 +1,146 @@
+@font-face {
+    font-family: 'Fixel Medium';
+    src: url('../../assets/fonts/FixelText-Medium.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }  
+
+.footer{
+    /* user-select: none; */
+    background-color: #FEFDFE;
+    padding: 5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    justify-content: space-between;
+}
+
+.footerBlockFirst{
+}
+
+.headerTitle {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+.ami {
+    color: #9b4d57;
+    font-weight: 600;
+    letter-spacing: 0%;
+    line-height: 100%;
+    font-family: 'Fixel Medium', sans-serif;
+
+  }
+  
+  .portal {
+    font-family: 'Fixel Medium', sans-serif;
+    color: transparent;
+    -webkit-text-stroke: 1px #9b4d57;
+    letter-spacing: 0%;
+    font-weight: 500;
+    line-height: 100%;
+    text-transform: uppercase;
+  }
+
+.techQuestion {
+    margin-top: 2rem;   
+    line-height: 140%;
+}
+
+.techQuestion p{
+    font-family: 'Fixel', sans-serif;
+    font-size: 20px;
+    color: #1e1e1e;
+}
+
+.techQuestion span{
+    font-family: 'Fixel', sans-serif;
+    font-size: 16px;
+    color: rgba(30, 30, 30, 0.76);
+}
+
+.techQuestion span a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.reservedRight {
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    color: #757575;
+    margin-top: 4rem;
+}
+
+.footerBlockSecond ul{
+    list-style: none;
+    padding: 0;
+    font-size: 20px;
+    font-family: 'Fixel', sans-serif;
+    color: #1e1e1e;
+}
+
+.footerBlockSecond ul li{
+    padding-bottom: 1rem;
+}
+
+.footerBlockSecond ul li a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.footerBlockThird{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+
+.footerBlockThird h2{
+    font-family: 'Fixel', sans-serif;
+    font-size: 20px;
+    color: #1e1e1e;
+}
+
+.footerBlockThirdInfo {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Fixel', sans-serif;
+    font-size: 16px;
+    color: #1e1e1e;
+    row-gap: 1rem;
+}
+
+.footerBlockThirdInfo span a{
+    text-decoration: none;
+    color: rgba(30, 30, 30, 0.76);;
+}
+
+.footerBlockThirdSocials {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.footerBlockFourth {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+
+.footerBlockFourth h2{
+    font-family: 'Fixel', sans-serif;
+    font-size: 20px;
+    color: #1e1e1e;
+}
+
+.footerBlockThirdInfo span{
+    text-decoration: none;
+    color: rgba(30, 30, 30, 0.76);;
+}
+
+.footerBlockThirdInfo span a{
+    text-decoration: none;
+    color: rgba(30, 30, 30, 0.76);;
+}

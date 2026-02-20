@@ -1,0 +1,74 @@
+.socialContainer {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+
+.divider::before {
+    margin-right: 10px;
+}
+
+.divider::after {
+    margin-left: 10px;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 10px;
+}
+
+.socialButton {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #c7bfbf;
+    border-radius: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.socialButton:hover {
+    background-color: #f5f5f5;
+}
+
+.googleButton {
+    color: #444;
+}
+
+.githubButton {
+    background-color: #24292e;
+    color: white;
+    border-color: #24292e;
+}
+
+.githubButton:hover {
+    background-color: #1a1e22;
+}
+
+.icon {
+    display: block;
+}

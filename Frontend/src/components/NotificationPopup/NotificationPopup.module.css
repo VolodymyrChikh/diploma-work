@@ -1,0 +1,92 @@
+.container {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 400px;
+    max-height: 500px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.closeButton:hover {
+    color: #333;
+}
+
+.notificationList {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+.notificationItem {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.notificationItem:hover {
+    background-color: #f8f9fa;
+}
+
+.notificationItem:last-child {
+    border-bottom: none;
+}
+
+.unread {
+    background-color: #f0f7ff;
+}
+
+.read {
+    background-color: white;
+}
+
+.notificationType {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.message {
+    margin: 5px 0;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.timestamp {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 5px;
+}
+
+.noNotifications {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+    font-size: 0.95rem;
+}

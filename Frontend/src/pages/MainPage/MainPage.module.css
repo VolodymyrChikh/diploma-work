@@ -1,0 +1,450 @@
+.mainPageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+  font-family: 'Fixel', sans-serif;
+  padding: 20px;
+}
+
+.aboutSpecialtyContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.aboutSpecialtyTitle {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 30px;
+}
+
+.specialtyCardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 60px;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.transparentButtonContainer {
+  margin-top: 40px;
+}
+
+.transparentButton {
+  padding: 12px 20px;
+  background-color: transparent;
+  color: #9b4d57;
+  font-size: 18px;
+  font-weight: 500;
+  border: 2px solid #9b4d57;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  font-family: 'Fixel', sans-serif;
+}
+
+.transparentButton:hover {
+  background-color: #9b4d57;
+  color: #ffffff;
+}
+
+
+@font-face {
+  font-family: 'Fixel';
+  src: url('../../assets/fonts/FixelText-Regular.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TT Lovelies Script';
+  src: url('../../assets/fonts/TT-Lovelies-Script-Trial.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fixel Medium';
+  src: url('../../assets/fonts/FixelText-Medium.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fixel SemiBold';
+  src: url('../../assets/fonts/FixelText-SemiBold.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.imageContainer {
+  position: relative;
+  text-align: center;
+  color: #ffffff;
+}
+
+.mainPageImage {
+  width: 100%;
+  height: auto;
+}
+
+.centeredTextFirst,
+.centeredTextSecond {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.centeredTextFirst {
+  top: 17%; 
+  color: rgb(199, 191, 191);
+  font-family: 'TT Lovelies Script', sans-serif;
+  font-size: 24px;
+  width: 100%;
+}
+
+.centeredTextSecond {
+  top: 26%;
+  color: #ffffff;
+  font-family: 'Fixel SemiBold', sans-serif;
+  font-size: 40px;
+  text-transform: uppercase;
+  width: 50%;
+  font-weight: 600;
+  line-height: 120%;
+}
+
+.buttonContainer {
+  position: absolute;
+  top: 82%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fpmiContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  background-image: url('../../assets/images/mainPageFpmiImage.jpg');
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  overflow: hidden;
+  height: 8rem;
+  color: #fff;
+  padding: 100px;
+  margin-top: 100px;
+}
+
+.fpmiContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1;
+}
+
+.fpmiInnerContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%; 
+  gap: 260px;
+}
+
+.fpmiText,
+.fpmiButtonContainer {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+}
+
+.fpmiText {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fpmiTitle {
+  font-family: 'Fixel', sans-serif;
+  font-size: 40px;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 120%;
+  margin: 0;
+}
+
+.fpmiDescription {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Fixel', sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 120%;
+  margin: 0;
+}
+
+@media (max-width: 1200px) {
+  .centeredTextFirst {
+    font-size: 22px;
+  }
+  
+  .centeredTextSecond {
+    font-size: 26px;
+    width: 60%;
+  }
+}
+
+@media (max-width: 930px) {
+ .centeredTextFirst {
+    top: 12%;
+    font-size: 16px;
+  }
+
+  .centeredTextSecond {
+    top: 25%;
+    font-size: 18px;
+    width: 80%;
+  }
+
+  .buttonContainer {
+    top: 82%;
+    transform: translate(-50%, -50%);
+  }
+
+  .buttonContainer button {
+    padding: 10px 40px;
+    font-size: 14px;
+  }
+  
+  .aboutSpecialtyTitle {
+    font-size: 30px;
+  }
+  
+  .specialtyCardsContainer {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainPageContainer {
+    padding: 15px;
+  }
+  
+  .centeredTextFirst {
+    top: 10%;
+    font-size: 14px;
+  }
+  
+  .centeredTextSecond {
+    top: 22%;
+    font-size: 16px;
+    width: 90%;
+  }
+  
+  .aboutSpecialtyTitle {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+  
+  .specialtyCardsContainer {
+    gap: 25px;
+  }
+  
+  .transparentButtonContainer {
+    margin-top: 30px;
+  }
+  
+  .transparentButton {
+    padding: 10px 16px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .mainPageContainer {
+    padding: 10px;
+  }
+  
+  .centeredTextFirst {
+    top: 8%;
+    font-size: 12px;
+  }
+  
+  .centeredTextSecond {
+    top: 18%;
+    font-size: 14px;
+    width: 95%;
+  }
+  
+  .buttonContainer {
+    top: 75%;
+  }
+  
+  .buttonContainer button {
+    padding: 8px 30px;
+    font-size: 12px;
+  }
+  
+  .aboutSpecialtyTitle {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+  
+  .specialtyCardsContainer {
+    gap: 20px;
+  }
+  
+  .transparentButtonContainer {
+    margin-top: 25px;
+  }
+  
+  .transparentButton {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .centeredTextFirst {
+    top: 6%;
+    font-size: 10px;
+  }
+  
+  .centeredTextSecond {
+    top: 15%;
+    font-size: 12px;
+  }
+  
+  .buttonContainer {
+    top: 70%;
+  }
+  
+  .buttonContainer button {
+    padding: 6px 20px;
+    font-size: 10px;
+  }
+  
+  .aboutSpecialtyTitle {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .transparentButton {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+/* FAQ Section */
+.faqContainer {
+  width: 100%;
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+  font-family: 'Fixel', sans-serif;
+}
+
+.faqTitle {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333333;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.faqItem {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.faqQuestion {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background-color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.faqQuestion:hover {
+  background-color: #f8f9fa;
+}
+
+.faqQuestion.active {
+  color: #9b4d57; /* Primary red color from site */
+}
+
+.faqIcon {
+  font-size: 24px;
+  font-weight: 300;
+  color: #777;
+  transition: transform 0.3s ease;
+}
+
+.faqQuestion.active .faqIcon {
+  color: #9b4d57;
+  transform: rotate(180deg);
+}
+
+.faqAnswer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-out, padding 0.3s ease;
+  background-color: #fafafa;
+}
+
+.faqAnswer.show {
+  max-height: 500px; /* Approximate max height */
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.faqAnswer p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .faqTitle {
+    font-size: 28px;
+  }
+  
+  .faqQuestion {
+    font-size: 16px;
+    padding: 15px;
+  }
+  
+  .faqAnswer p {
+    font-size: 14px;
+  }
+}

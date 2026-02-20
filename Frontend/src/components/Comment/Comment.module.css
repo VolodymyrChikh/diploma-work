@@ -1,0 +1,190 @@
+@font-face {
+  font-family: 'Fixel';
+  src: url('../../assets/fonts/FixelText-Regular.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.comment {
+    position: relative;
+    padding-left: 16px;
+}
+
+.comment::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px; 
+    height: 70%;
+    width: 2px; 
+    background-color: #C7BFBF;
+}
+
+.commentHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.commentAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.commentMeta {
+    display: flex;
+    flex-direction: column;
+}
+
+.commentAuthor {
+    color: #000;
+    text-align: center;
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 140%;
+}
+
+.commentTime {
+    color: rgba(51, 51, 51, 0.65);
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+}
+
+.commentBody {
+    color: #1E1E1E;
+    font-family: 'Fixel', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+}
+
+.commentBody p {
+    margin: 0;
+    color: #1E1E1E;
+    font-family: 'Fixel', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+}
+
+.commentOptions {
+    position: relative;
+    margin-left: auto;
+}
+
+.optionsButton {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 50%;
+}
+
+.optionsButton:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dropdownMenu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 120px;
+}
+
+.dropdownMenu button {
+    width: 100%;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: 'Fixel', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.editButton {
+    color: #333;
+}
+
+.editButton:hover {
+    background-color: #f5f5f5;
+}
+
+.deleteButton {
+    color: #dc3545;
+}
+
+.deleteButton:hover {
+    background-color: #ffebee;
+}
+
+.editContainer {
+    width: 100%;
+}
+
+.editInput {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #C7BFBF;
+    border-radius: 4px;
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    margin-bottom: 8px;
+    resize: vertical;
+}
+
+.editButtons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.editButtons button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: 'Fixel', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.saveButton {
+    background-color: #9B4D57;
+    color: white;
+    border: none;
+}
+
+.saveButton:hover:not(:disabled) {
+    background-color: #83404a;
+}
+
+.saveButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    background-color: transparent;
+    border: 1px solid #C7BFBF;
+    color: #666;
+}
+
+.cancelButton:hover {
+    background-color: #f5f5f5;
+}
