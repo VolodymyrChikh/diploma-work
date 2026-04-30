@@ -9,6 +9,10 @@ public record UserResponse(Long id,
                            String email,
                            String password,
                            SpecialtyResponse specialtyResponse,
-                           String avatarLink
+                           String avatarLink,
+                           String groupName,
+                           String bio,
+                           String githubLink,
+                           String status
 ) {
 }

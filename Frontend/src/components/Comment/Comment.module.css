@@ -7,74 +7,80 @@
 
 .comment {
     position: relative;
-    padding-left: 16px;
+    padding-left: 20px;
+    margin-bottom: 16px;
 }
 
 .comment::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 10px; 
-    height: 70%;
-    width: 2px; 
-    background-color: #C7BFBF;
+    top: 8px; 
+    height: calc(100% - 16px);
+    width: 3px; 
+    background-color: #eaeaea;
+    border-radius: 3px;
 }
 
 .commentHeader {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .commentAvatar {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 10px;
+    margin-right: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .commentMeta {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 .commentAuthor {
-    color: #000;
-    text-align: center;
+    color: #1a1a1a;
+    text-align: left;
     font-family: 'Fixel', sans-serif;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 140%;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
 .commentTime {
-    color: rgba(51, 51, 51, 0.65);
+    color: #888;
     font-family: 'Fixel', sans-serif;
-    font-size: 14px;
-    font-style: normal;
+    font-size: 13px;
     font-weight: 400;
-    line-height: 140%;
+    line-height: 1.4;
+    margin-top: 2px;
 }
 
 .commentBody {
-    color: #1E1E1E;
+    color: #4a4a4a;
     font-family: 'Fixel', sans-serif;
-    font-size: 16px;
-    font-style: normal;
+    font-size: 15px;
     font-weight: 400;
-    line-height: 140%;
+    line-height: 1.6;
+    margin-top: 4px;
 }
 
 .commentBody p {
-    margin: 0;
-    color: #1E1E1E;
-    font-family: 'Fixel', sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 140%;
+    margin: 0 0 8px 0;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
+.commentBody p:last-child {
+    margin-bottom: 0;
 }
 
 .commentOptions {
@@ -100,11 +106,12 @@
     right: 0;
     top: 100%;
     background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     z-index: 1000;
-    min-width: 120px;
+    min-width: 140px;
+    overflow: hidden;
 }
 
 .dropdownMenu button {
@@ -140,28 +147,37 @@
 
 .editInput {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #C7BFBF;
-    border-radius: 4px;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-family: 'Fixel', sans-serif;
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 10px;
     resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+.editInput:focus {
+    border-color: #9B4D57;
+    box-shadow: 0 0 0 3px rgba(155, 77, 87, 0.1);
 }
 
 .editButtons {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: flex-end;
 }
 
 .editButtons button {
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 6px;
     font-family: 'Fixel', sans-serif;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .saveButton {
@@ -181,10 +197,11 @@
 
 .cancelButton {
     background-color: transparent;
-    border: 1px solid #C7BFBF;
+    border: 1px solid #ddd;
     color: #666;
 }
 
 .cancelButton:hover {
     background-color: #f5f5f5;
+    color: #333;
 }

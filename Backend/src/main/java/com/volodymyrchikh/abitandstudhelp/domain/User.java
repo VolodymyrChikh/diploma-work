@@ -29,6 +29,17 @@ public class User {
     private String password;
     private String avatarLink;
 
+    @Enumerated(EnumType.STRING)
+    private StudentGroup groupName;
+
+    @Column(length = 500)
+    private String bio;
+
+    private String githubLink;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
     @CreatedDate
     private LocalDateTime createdAt;
 

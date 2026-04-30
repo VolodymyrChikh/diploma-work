@@ -167,6 +167,10 @@
   transition: color .3s ease;
 }
 
+.forumHeaderList li:hover{
+  color: #9B4D57;
+  font-weight: 500;
+}
 
 .createPostButton {
   background-color: #9B4D57;

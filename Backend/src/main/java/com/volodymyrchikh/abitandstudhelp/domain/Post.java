@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "posts")
+@Table(name = "posts", indexes = {@Index(name = "idx_post_slug", columnList = "slug")})
 @EntityListeners(AuditingEntityListener.class)
 public class Post {
 
@@ -26,6 +26,8 @@ public class Post {
     private Long id;
 
     private String title;
+    @Column(unique = true, nullable = false)
+    private String slug;
     private Integer likes = 0;
     private Boolean isAnonymous = false;
 
@@ -64,4 +66,5 @@ public class Post {
         if (likedByUsers.remove(user)) {
             likes = likedByUsers.size();
         }
-    }}
+    }
+}

@@ -18,6 +18,7 @@ import com.volodymyrchikh.abitandstudhelp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import com.volodymyrchikh.abitandstudhelp.utils.SlugUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -28,24 +29,44 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
-    public PostResponse create(PostRequest postRequest){
+    public PostResponse create(PostRequest postRequest) {
         Category category = categoryRepository.findById(postRequest.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException("Category with id=[%s] not found"
-                        .formatted(postRequest.getCategoryId()), postRequest.getCategoryId()));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found", postRequest.getCategoryId()));
 
         User user = userRepository.findById(postRequest.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User with id=[%s] not found"
-                        .formatted(postRequest.getUserId()), postRequest.getUserId()));
+                .orElseThrow(() -> new UserNotFoundException("User not found", postRequest.getUserId()));
 
+        // 1. Генеруємо базу для слага з титулу
+        String baseSlug = SlugUtils.toSlug(postRequest.getTitle());
+        System.out.println("Base Slug: " + baseSlug);
         Post post = Post.builder()
                 .title(postRequest.getTitle())
                 .likes(postRequest.getLikes())
                 .isAnonymous(postRequest.getIsAnonymous())
                 .category(category)
                 .user(user)
+                .slug(generateUniqueSlug(baseSlug)) // 2. Встановлюємо унікальний slug
                 .build();
 
         return postMapper.mapToResponse(postRepository.save(post));
+    }
+
+    // Новий метод для отримання за слагом
+    public PostResponse getBySlug(String slug) {
+        return postRepository.findBySlug(slug)
+                .map(postMapper::mapToResponse)
+                .orElseThrow(() -> new PostNotFoundException("Post with slug=[%s] not found".formatted(slug), 0L));
+    }
+
+    // Рекурсивна або циклічна перевірка унікальності
+    private String generateUniqueSlug(String baseSlug) {
+        String slug = baseSlug;
+        int count = 1;
+        while (postRepository.existsBySlug(slug)) {
+            slug = baseSlug + "-" + count;
+            count++;
+        }
+        return slug;
     }
 
     public PostResponse getById(Long postId){

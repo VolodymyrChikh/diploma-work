@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './PostDetail.module.css';
 import Header from '../../components/Header/Header';
@@ -6,9 +6,10 @@ import Footer from '../../components/Footer/Footer';
 import anonymousAvatar from '../../assets/images/anonymous.jpg';
 import { AuthContext } from '../../context/AuthContext';
 import Comment from '../../components/Comment/Comment';
+import NotFound from '../../components/Errors/NotFound/NotFound';
 
 function PostDetail() {
-    const { id } = useParams();
+    const { slug } = useParams();
     const navigate = useNavigate();
     const { isAuthenticated, user, getAuthInfo } = useContext(AuthContext);
     
@@ -47,54 +48,53 @@ function PostDetail() {
     
     useEffect(() => {
         const intervalId = setInterval(() => {
-            if (id) {
+            if (post?.id) {
                 console.log("Auto-refreshing comments...");
-                fetchComments();
+                fetchComments(post.id);
             }
         }, 30000);
-        
-        return () => clearInterval(intervalId);
-    }, [id]);
 
-    const fetchComments = async () => {
+        return () => clearInterval(intervalId);
+    }, [post?.id]);
+
+    const fetchComments = useCallback(async (postId) => {
+        if (!postId) return;
         try {
-            const response = await fetch(`http://localhost:9000/comments/post/${id}?size=1000&sort=createdAt,desc`);
-            if (!response.ok) {
-                throw new Error('Failed to load comments');
-            }
+            const response = await fetch(`http://localhost:9000/comments/post/${postId}?size=1000&sort=createdAt,desc`);
+            if (!response.ok) throw new Error('Failed to load comments');
             const data = await response.json();
-            console.log("Fetched comments data:", data);
-            
-            const processedComments = data.content || [];
-            setComments(processedComments);
-            
+            setComments(data.content || []);
         } catch (err) {
             console.error("Error fetching comments:", err);
-            setError(err.message);
+            setCommentError(err.message);
         }
-    };
+    }, []);
     
     useEffect(() => {
-        if (id) {
-            async function fetchPostData() {
-                try {
-                    const response = await fetch(`http://localhost:9000/posts/${id}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to load post');
-                    }
-                    const data = await response.json();
-                    setPost(data);
-                } catch (err) {
-                    setError(err.message);
-                } finally {
-                    setLoading(false);
+        if (!slug) return;
+
+        async function fetchPostData() {
+            try {
+                const response = await fetch(`http://localhost:9000/posts/slug/${slug}`);
+                if (!response.ok) {
+                    throw new Error('Post not found');
                 }
+
+                const data = await response.json();
+                setPost(data);
+
+                if (data?.id) {
+                    await fetchComments(data.id);
+                }
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
-            
-            fetchPostData();
-            fetchComments();
         }
-    }, [id]);
+
+        fetchPostData();
+    }, [slug, fetchComments]);
 
     function getRelativeTime(dateStr) {
         if (!dateStr) return 'Невідомий час';
@@ -150,7 +150,7 @@ function PostDetail() {
         e.preventDefault();
         
         if (!isAuthenticated) {
-            navigate('/signin', { state: { from: `/post/${id}` } });
+            navigate('/signin', { state: { from: `/forum/post/${slug}` } });
             return;
         }
 
@@ -194,7 +194,7 @@ function PostDetail() {
             
             const commentData = {
                 content: newComment,
-                postId: parseInt(id),
+                postId: post.id,
                 userId: userId,
             };
             
@@ -219,7 +219,7 @@ function PostDetail() {
             console.log("New comment created successfully:", newCommentData);
             
             setNewComment('');
-            await fetchComments(); // Refresh comments
+            await fetchComments(post.id); // Refresh comments
             
         } catch (err) {
             console.error("Error posting comment:", err);
@@ -231,7 +231,7 @@ function PostDetail() {
 
     const handleEditComment = async (commentId, newContent) => {
         if (!isAuthenticated) {
-            navigate('/signin', { state: { from: `/post/${id}` } });
+            navigate('/signin', { state: { from: `/post/${slug}` } });
             return;
         }
 
@@ -255,7 +255,9 @@ function PostDetail() {
                 throw new Error(`Failed to edit comment: ${response.status} ${errorText}`);
             }
 
-            await fetchComments();
+            if (post?.id) {
+                await fetchComments(post.id);
+            }
         } catch (err) {
             console.error("Error editing comment:", err);
             alert('Помилка при редагуванні коментаря');
@@ -264,7 +266,7 @@ function PostDetail() {
 
     const handleDeleteComment = async (commentId) => {
         if (!isAuthenticated) {
-            navigate('/signin', { state: { from: `/post/${id}` } });
+            navigate('/signin', { state: { from: `/post/${slug}` } });
             return;
         }
 
@@ -286,7 +288,9 @@ function PostDetail() {
                 throw new Error(`Failed to delete comment: ${response.status} ${errorText}`);
             }
 
-            await fetchComments();
+            if (post?.id) {
+                await fetchComments(post.id);
+            }
         } catch (err) {
             console.error("Error deleting comment:", err);
             alert('Помилка при видаленні коментаря');
@@ -309,18 +313,7 @@ function PostDetail() {
         </>
     );
 
-    if (error || !post) return (
-        <>
-            <Header />
-            <div className={styles.errorContainer}>
-                <p>Помилка: {error || 'Пост не знайдено'}</p>
-                <button className={styles.backButton} onClick={() => navigate('/forum')}>
-                    Повернутися до форуму
-                </button>
-            </div>
-            <Footer />
-        </>
-    );
+    if (error || !post) return <NotFound />;
 
     const userName = post.isAnonymous 
         ? 'Анонім'

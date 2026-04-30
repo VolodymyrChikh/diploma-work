@@ -33,6 +33,7 @@ public class PostMapper {
     public PostResponse mapToResponse(Post post){
         return PostResponse.builder()
                 .id(post.getId())
+                .slug(post.getSlug())
                 .title(post.getTitle())
                 .likes(post.getLikes())
                 .isAnonymous(post.getIsAnonymous())

@@ -1,0 +1,71 @@
+@font-face {
+  font-family: 'Fixel SemiBold';
+  src: url('../../../assets/fonts/FixelText-SemiBold.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fixel';
+  src: url('../../../assets/fonts/FixelText-Regular.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.notFoundPage {
+    background-color: #eddfe1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+.content h1 {
+    font-family: 'Fixel SemiBold', sans-serif;
+    font-size: 150px;
+    color: #9B4D57;
+    margin: 0;
+    line-height: 1;
+}
+
+.content h2 {
+    font-family: 'Fixel SemiBold', sans-serif;
+    font-size: 36px;
+    color: #1e1e1e;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.content p {
+    font-family: 'Fixel', sans-serif;
+    font-size: 18px;
+    color: rgba(51, 51, 51, 0.65);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+}
+
+.backButton {
+    background-color: #9B4D57;
+    color: #ffffff;
+    font-family: 'Fixel SemiBold', sans-serif;
+    font-size: 18px;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.backButton:hover {
+    background-color: #873e47;
+    transform: translateY(-2px);
+}

@@ -9,6 +9,7 @@ import PrivateRoute from './routes/PrivateRoute';
 import AboutSpecialtyPage from './pages/About Specialty Page/AboutSpecialtyPage';
 import PostDetail from './pages/Post Detail Page/PostDetail';
 import AiChatPopup from './components/AiChatPopup/AiChatPopup';
+import NotFound from './components/Errors/NotFound/NotFound';
 
 function App() {
   return (
@@ -21,10 +22,11 @@ function App() {
         <Route path="/main" element={<MainPage />} />
         <Route path="/about-specialties" element={<AboutSpecialtyPage />} />
         <Route path="/forum" element={<Forum />} />
-        <Route path="/post/:id" element={<PostDetail />} />
+        <Route path="/forum/post/:slug" element={<PostDetail />} />
+        <Route path="/post/:slug" element={<PostDetail />} />
         <Route path="/create-post" element={<PrivateRoute><CreatePost /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
-        <Route path="*" element={<div style={{ display: 'flex', justifyContent: 'center', color: 'red', fontSize: '48px', }}><p>404 Not Found</p></div>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

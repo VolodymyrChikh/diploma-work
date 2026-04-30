@@ -51,6 +51,7 @@ dependencies {
     implementation 'javax.mail:mail:1.4.7'
     implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-M5")
     implementation 'org.apache.pdfbox:pdfbox:3.0.6'
+    implementation 'com.ibm.icu:icu4j:78.3'
 //    implementation 'org.springframework.ai:spring-ai-google-genai-spring-boot-starter'
     implementation 'com.google.genai:google-genai:1.35.0'
     implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
@@ -61,6 +62,8 @@ dependencies {
     implementation "com.querydsl:querydsl-core:${queryDslVersion}"
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
     implementation 'org.postgresql:postgresql'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
 
     compileOnly 'org.projectlombok:lombok'
 

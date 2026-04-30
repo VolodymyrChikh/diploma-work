@@ -112,11 +112,10 @@ function Forum() {
                 fetchedPosts = fetchedPosts.filter(post =>
                     post.categoryResponse && selectedCategories.includes(post.categoryResponse.name)
                 );
-            }            const newAllPosts = reset ? fetchedPosts : [...allPosts, ...fetchedPosts];
-            const newPosts = reset ? fetchedPosts : [...posts, ...fetchedPosts];
-            
-            setAllPosts(newAllPosts);
-            setPosts(newPosts);
+            }
+
+            setAllPosts(prevAll => (reset ? fetchedPosts : [...prevAll, ...fetchedPosts]));
+            setPosts(prevPosts => (reset ? fetchedPosts : [...prevPosts, ...fetchedPosts]));
             setHasMore(fetchedPosts.length === POSTS_PER_PAGE);
             setPrevPosts([]);
         } catch (e) {
@@ -175,11 +174,18 @@ function Forum() {
     }, []);
 
     const mapCommentsByPostId = (comments) => {
+        if (!comments) return {};
+
         const mapped = {};
-        Object.values(comments).forEach(comment => {
-            const postId = comment.postResponse.id;
-            mapped[postId] = comment;
+        const list = Array.isArray(comments) ? comments : Object.values(comments);
+
+        list.forEach(comment => {
+            const postId = comment?.postResponse?.id;
+            if (postId) {
+                mapped[postId] = comment;
+            }
         });
+
         return mapped;
     };
 

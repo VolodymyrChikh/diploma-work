@@ -4,6 +4,7 @@ import com.volodymyrchikh.abitandstudhelp.dto.ErrorDetail;
 import com.volodymyrchikh.abitandstudhelp.exception.EmailIsAlreadyUsed;
 import com.volodymyrchikh.abitandstudhelp.exception.FieldAlreadyUsedException;
 import com.volodymyrchikh.abitandstudhelp.exception.FaqNotFoundException;
+import com.volodymyrchikh.abitandstudhelp.exception.GroupNotFoundException;
 import com.volodymyrchikh.abitandstudhelp.exception.SpecialtyNotFoundException;
 import com.volodymyrchikh.abitandstudhelp.mapper.ErrorDetailMapper;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,18 @@ public class ApiExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 URI.create("about:blank"),
                 "FAQ not found",
+                URI.create(((ServletWebRequest) request).getRequest().getRequestURI()),
+                List.of(errorDetailMapper.from(ex))
+        );
+    }
+
+    @ExceptionHandler(GroupNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProblemDetail handleGroupNotFound(GroupNotFoundException ex, WebRequest request) {
+        return getProblemDetail(
+                HttpStatus.BAD_REQUEST,
+                URI.create("about:blank"),
+                "Group not found",
                 URI.create(((ServletWebRequest) request).getRequest().getRequestURI()),
                 List.of(errorDetailMapper.from(ex))
         );

@@ -1,10 +1,7 @@
 package com.volodymyrchikh.abitandstudhelp.mapper;
 
 import com.volodymyrchikh.abitandstudhelp.dto.ErrorDetail;
-import com.volodymyrchikh.abitandstudhelp.exception.EmailIsAlreadyUsed;
-import com.volodymyrchikh.abitandstudhelp.exception.FaqNotFoundException;
-import com.volodymyrchikh.abitandstudhelp.exception.FieldAlreadyUsedException;
-import com.volodymyrchikh.abitandstudhelp.exception.SpecialtyNotFoundException;
+import com.volodymyrchikh.abitandstudhelp.exception.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -23,4 +20,8 @@ public interface ErrorDetailMapper {
     @Mapping(target = "cause", expression = "java(\"FAQ\")")
     @Mapping(target = "message", expression = "java(ex.getMessage())")
     ErrorDetail from(FaqNotFoundException ex);
+
+    @Mapping(target = "cause", expression = "java(ex.getGroupName())")
+    @Mapping(target = "message", expression = "java(ex.getMessage())")
+    ErrorDetail from(GroupNotFoundException ex);
 }

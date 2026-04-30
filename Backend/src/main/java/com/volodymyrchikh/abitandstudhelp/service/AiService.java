@@ -25,8 +25,6 @@ public class AiService {
         this.client = new Client();
     }
 
-    // ... існуючі імпорти
-
     @PostConstruct
     public void init() {
         String documentsContext = loadPdfDocuments();

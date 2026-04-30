@@ -11,6 +11,7 @@ public class PostResponse{
 
         private Long id;
         private String title;
+        private String slug;
         private Integer likes;
         private Boolean isAnonymous;
         private LocalDateTime createdAt;

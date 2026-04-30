@@ -77,8 +77,15 @@ public class UserService {
         User toUpdateUser = userRepository.findById(id).orElseThrow(() ->
                 new UserNotFoundException("User with id=[%s] not found".formatted(id), id));
 
-        if (userRepository.existsByEmail((request.getEmail()))) {
+        if (!toUpdateUser.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new WrongCredentialsException("Email is already taken!", request);
+        }
+
+        if (request.getSpecialtyId() != null) {
+            Specialty specialty = specialtyRepository.findById(request.getSpecialtyId())
+                    .orElseThrow(() -> new SpecialtyNotFoundException("Specialty of id=[%s] not found"
+                            .formatted(request.getSpecialtyId()), request.getSpecialtyId(), null));
+            toUpdateUser.setSpecialty(specialty);
         }
 
         User newUser = userRepository.save(userMapper.updateUser(toUpdateUser, request));

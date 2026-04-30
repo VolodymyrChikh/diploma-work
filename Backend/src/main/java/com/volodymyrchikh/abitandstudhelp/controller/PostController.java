@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/forum/posts")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -24,6 +24,11 @@ public class PostController {
     @PostMapping
     public PostResponse create(@RequestBody @Valid PostRequest postRequest) {
         return postService.create(postRequest);
+    }
+
+    @GetMapping("/slug/{slug}")
+    public PostResponse getBySlug(@PathVariable String slug) {
+        return postService.getBySlug(slug);
     }
 
     @GetMapping("/{id}")

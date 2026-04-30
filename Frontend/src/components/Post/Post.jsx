@@ -5,7 +5,7 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
-function Post({ id, title, content, likes: initialLikes, createdAt, categoryResponse, userResponse, isAnonymous, lastComment }) {
+function Post({ id, slug, title, content, likes: initialLikes, createdAt, categoryResponse, userResponse, isAnonymous, lastComment }) {
     const navigate = useNavigate();
     const { user, isAuthenticated } = useContext(AuthContext);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -49,7 +49,8 @@ function Post({ id, title, content, likes: initialLikes, createdAt, categoryResp
         e.stopPropagation();
 
         if (!isAuthenticated) {
-            navigate('/signin', { state: { from: `/post/${id}` } });
+            const redirectPath = slug ? `/post/${slug}` : `/post/${id}`;
+            navigate('/signin', { state: { from: redirectPath } });
             return;
         }
 
@@ -170,7 +171,11 @@ function Post({ id, title, content, likes: initialLikes, createdAt, categoryResp
     }
     
     const navigateToPostDetail = () => {
-        navigate(`/post/${id}`);
+        if (slug) {
+            navigate(`/forum/post/${slug}`);
+        } else {
+            navigate(`/forum/post/${id}`);
+        }
     };
 
     const postTime = createdAt ? getRelativeTime(createdAt) : 'Невідомий час';
@@ -316,6 +321,7 @@ function Post({ id, title, content, likes: initialLikes, createdAt, categoryResp
 
 Post.propTypes = {
     id: PropTypes.number.isRequired,
+    slug: PropTypes.string,
     title: PropTypes.string.isRequired,
     content: PropTypes.string,
     likes: PropTypes.number,

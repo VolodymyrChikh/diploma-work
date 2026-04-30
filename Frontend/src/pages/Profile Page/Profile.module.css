@@ -24,6 +24,33 @@
   max-width: 900px;
 }
 
+.authPopup {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Fixel', sans-serif;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    top: 40px;
+    opacity: 0;
+  }
+  to {
+    top: 80px;
+    opacity: 1;
+  }
+}
+
 .profileContainer {
   display: flex;
   flex-direction: column;
@@ -212,6 +239,22 @@
   border-bottom: 1px solid #eee;
 }
 
+.multilineValue {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.detailLink {
+  color: #9B4D57;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.detailLink:hover {
+  color: #8a4049;
+  text-decoration: underline;
+}
+
 .passwordContainer {
   position: relative;
   display: flex;
@@ -343,4 +386,28 @@
   .exitButton, .editButton {
     width: 100%;
   }
+}
+
+.formInput, .formSelect, .formTextarea {
+  flex: 1;
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+  background-color: #fff;
+  font-family: 'Fixel', sans-serif;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.formInput:focus, .formSelect:focus, .formTextarea:focus {
+  border-color: #9B4D57;
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 80px;
 }
