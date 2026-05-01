@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/forum/posts")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
 
