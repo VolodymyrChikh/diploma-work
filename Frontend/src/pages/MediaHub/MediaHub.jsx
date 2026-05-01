@@ -345,7 +345,7 @@ function MediaHub() {
                   onClick={handleLoadMore}
                   disabled={pageInfo.loading}
                 >
-                  {pageInfo.loading ? "Завантаження..." : "Load More"}
+                  {pageInfo.loading ? "Завантаження..." : "Завантажити ще"}
                 </button>
               </div>
             )}
