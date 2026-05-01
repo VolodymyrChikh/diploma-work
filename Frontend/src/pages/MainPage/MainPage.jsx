@@ -11,9 +11,11 @@ import mainPageImage from '../../assets/images/mainPageImage.png';
 import RedButton from "../../components/Button/RedButton";
 import styles from './MainPage.module.css';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 function MainPage() {
+  const location = useLocation();
 
   const mainImageAlt = "Студенти факультету прикладної математики та інформатики";
 
@@ -48,6 +50,24 @@ function MainPage() {
     fetchSpecialties();
     fetchFaqs();
   }, []);
+
+  useEffect(() => {
+    if (!location.hash) {
+      return;
+    }
+
+    const hashId = location.hash.replace('#', '');
+    const timeoutId = setTimeout(() => {
+      const target = document.getElementById(hashId);
+      if (!target) {
+        return;
+      }
+
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+
+    return () => clearTimeout(timeoutId);
+  }, [location.pathname, location.hash, specialties.length, faqs.length]);
 
   const toggleFaq = (id) => {
     setOpenFaqId(openFaqId === id ? null : id);
@@ -119,7 +139,7 @@ function MainPage() {
       </div>
 
       <div className={styles.faqContainer}>
-        <h1 className={styles.faqTitle}>Часті запитання</h1>
+        <h1 id="faq" className={styles.faqTitle}>Часті запитання</h1>
         <div className={styles.faqList}>
           {faqs.map((faq) => (
             <div key={faq.id} className={styles.faqItem}>

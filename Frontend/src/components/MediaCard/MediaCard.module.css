@@ -1,0 +1,112 @@
+.card {
+  background: #ffffff;
+  border: 1px solid #e9e0dd;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 10px 24px rgba(20, 20, 20, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
+}
+
+.card:focus {
+  outline: 2px solid #9b4d57;
+  outline-offset: 2px;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(20, 20, 20, 0.10);
+}
+
+.iconRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: #fbf4f3;
+  color: #2a2a2a;
+  display: grid;
+  place-items: center;
+  position: relative;
+  border: 1px solid #efe6e4;
+}
+
+.iconWrap svg {
+  width: 28px;
+  height: 28px;
+}
+
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(155,77,87,0.18);
+  border-radius: 12px;
+}
+
+.playTriangle {
+  width: 0;
+  height: 0;
+  border-left: 11px solid #ffffff;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  transform: translateX(1px);
+}
+
+.typePill {
+  font-family: "Fixel", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(155,77,87,0.08);
+  color: #9b4d57;
+}
+
+.title {
+  font-family: "Fixel", sans-serif;
+  font-size: 18px;
+  margin: 0;
+  color: #1e1e1e;
+}
+
+.description {
+  font-family: "Fixel", sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #4b3b34;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.cta {
+  margin-top: auto;
+  align-self: flex-start;
+  border: 1px solid #9b4d57;
+  background: #9b4d57;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: "Fixel", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.14s ease, background 0.14s ease;
+}
+
+.cta:hover {
+  transform: translateY(-1px);
+  background: #854246;
+}

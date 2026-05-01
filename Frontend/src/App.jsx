@@ -10,6 +10,7 @@ import AboutSpecialtyPage from './pages/About Specialty Page/AboutSpecialtyPage'
 import PostDetail from './pages/Post Detail Page/PostDetail';
 import AiChatPopup from './components/AiChatPopup/AiChatPopup';
 import NotFound from './components/Errors/NotFound/NotFound';
+import MediaHub from './pages/MediaHub/MediaHub';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/forum" element={<Forum />} />
         <Route path="/forum/post/:slug" element={<PostDetail />} />
         <Route path="/post/:slug" element={<PostDetail />} />
+        <Route path="/media" element={<MediaHub />} />
         <Route path="/create-post" element={<PrivateRoute><CreatePost /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
         <Route path="*" element={<NotFound />} />
