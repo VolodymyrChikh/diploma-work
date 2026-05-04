@@ -21,3 +21,35 @@
 .highlightedWords {
     color: #9B4D57;
 }
+
+.courseMapLinkContainer {
+    padding: 0 9rem 4rem 9rem;
+}
+
+.courseMapLink {
+    display: inline-block;
+    text-decoration: none;
+    color: #9B4D57;
+    border: 1px solid #9B4D57;
+    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Fixel', sans-serif;
+    font-size: 18px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.courseMapLink:hover {
+    color: #fff;
+    background-color: #9B4D57;
+}
+
+@media (max-width: 900px) {
+    .mainTitle {
+        font-size: 44px;
+        margin-top: 4rem;
+    }
+
+    .courseMapLinkContainer {
+        padding: 0 2rem 3rem 2rem;
+    }
+}

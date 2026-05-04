@@ -29,6 +29,7 @@ function Footer(){
                 <ul className={styles.footerHeaderNav}>
                     <li><a href="/main">Головна</a></li>
                     <li><a href="/about-specialties">Про спеціальності</a></li>
+                    <li><a href="/course-map">Карта курсів</a></li>
                     <li><a href="/forum">Форум</a></li>
                     <li><a href="/profile">Профіль</a></li>
                 </ul>

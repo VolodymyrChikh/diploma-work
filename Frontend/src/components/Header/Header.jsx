@@ -18,6 +18,7 @@ function Header(){
                 <ul className={styles.headerNavLinks}>
                     <li><a href="/main">Головна</a></li>
                     <li><a href="/about-specialties">Про спеціальності</a></li>
+                    <li><a href="/course-map">Карта курсів</a></li>
                     <li><a href="/media">Медіатека</a></li>
                     <li><a href="/forum">Форум</a></li>                
                     <li><a href="/profile">Профіль</a></li>
