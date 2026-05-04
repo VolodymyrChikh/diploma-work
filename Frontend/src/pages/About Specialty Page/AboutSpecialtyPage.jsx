@@ -92,6 +92,11 @@ function AboutSpecialtyPage() {
                     "Фахівець з цифрової освіти в державних та приватних структурах"
                     ]}
                 />
+                <div className={styles.courseMapLinkContainer}>
+                    <a className={styles.courseMapLink} href="/course-map?specialty=014&level=bachelor">
+                        Переглянути карту курсів
+                    </a>
+                </div>
             </div>
 
             <div ref={specialtyRefs['F1']} id="specialty-113">
@@ -114,6 +119,11 @@ function AboutSpecialtyPage() {
                         "Дослідник у наукових інститутах або R&D"
                     ]}
                 />
+                <div className={styles.courseMapLinkContainer}>
+                    <a className={styles.courseMapLink} href="/course-map?specialty=113&level=bachelor">
+                        Переглянути карту курсів
+                    </a>
+                </div>
             </div>
 
             <div ref={specialtyRefs['F3']} id="specialty-122">
@@ -136,6 +146,11 @@ function AboutSpecialtyPage() {
                       "Фахівець з DevOps, Data Engineer, Game Developer"
                     ]}
                 />
+                <div className={styles.courseMapLinkContainer}>
+                    <a className={styles.courseMapLink} href="/course-map?specialty=122&level=bachelor">
+                        Переглянути карту курсів
+                    </a>
+                </div>
             </div>
 
             <div ref={specialtyRefs['F4']} id="specialty-124">
@@ -158,6 +173,11 @@ function AboutSpecialtyPage() {
                         "Консультант з цифрової трансформації"
                     ]}
                 />
+                <div className={styles.courseMapLinkContainer}>
+                    <a className={styles.courseMapLink} href="/course-map?specialty=124&level=bachelor">
+                        Переглянути карту курсів
+                    </a>
+                </div>
             </div>
 
             <div ref={specialtyRefs['F5']} id="specialty-125">
@@ -180,6 +200,11 @@ function AboutSpecialtyPage() {
                         "IT-аудитор"
                     ]}
                 />
+                <div className={styles.courseMapLinkContainer}>
+                    <a className={styles.courseMapLink} href="/course-map?specialty=125&level=bachelor">
+                        Переглянути карту курсів
+                    </a>
+                </div>
             </div>
             
             <Footer />

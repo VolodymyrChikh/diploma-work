@@ -7,6 +7,7 @@ import CreatePost from './pages/Create Post Page/CreatePost';
 import Profile from './pages/Profile Page/Profile';
 import PrivateRoute from './routes/PrivateRoute';
 import AboutSpecialtyPage from './pages/About Specialty Page/AboutSpecialtyPage';
+import CourseMapPage from './pages/Course Map Page/CourseMapPage';
 import PostDetail from './pages/Post Detail Page/PostDetail';
 import AiChatPopup from './components/AiChatPopup/AiChatPopup';
 import NotFound from './components/Errors/NotFound/NotFound';
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<Navigate to="/main" replace />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/about-specialties" element={<AboutSpecialtyPage />} />
+        <Route path="/course-map" element={<CourseMapPage />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="/forum/post/:slug" element={<PostDetail />} />
         <Route path="/post/:slug" element={<PostDetail />} />
