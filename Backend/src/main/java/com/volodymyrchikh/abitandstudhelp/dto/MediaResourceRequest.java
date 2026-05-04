@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -19,8 +21,9 @@ public class MediaResourceRequest {
 
     private String description;
 
-    @NotBlank(message = "URL is required")
     private String url;
+
+    private List<String> fileUrls;
 
     @NotNull(message = "Type is required")
     private ResourceType type;

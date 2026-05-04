@@ -110,3 +110,29 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FEFDFE;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9b4d57;
+  border-radius: 6px;
+  border: 2px solid #FEFDFE;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7a3a45;
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-color: #9b4d57 #FEFDFE;
+  scrollbar-width: thin;
+}

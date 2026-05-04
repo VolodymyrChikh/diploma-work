@@ -4,9 +4,9 @@ import com.volodymyrchikh.abitandstudhelp.common.ResourceType;
 import com.volodymyrchikh.abitandstudhelp.dto.CategoryResponse;
 import com.volodymyrchikh.abitandstudhelp.dto.MediaResourceRequest;
 import com.volodymyrchikh.abitandstudhelp.dto.MediaResourceResponse;
+import com.volodymyrchikh.abitandstudhelp.dto.StorageUploadResponse;
 import com.volodymyrchikh.abitandstudhelp.service.MediaResourceService;
 import com.volodymyrchikh.abitandstudhelp.service.storage.SupabaseStorageService;
-import com.volodymyrchikh.abitandstudhelp.dto.StorageUploadResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
@@ -61,23 +61,36 @@ public class MediaResourceController {
     }
 
     /**
-     * Create media resource via multipart file upload. The file will be uploaded to Supabase storage
-     * and the resulting public URL will be saved in the resource record.
+     * Create media resource via multipart file upload. The files will be uploaded to Supabase storage
+     * and the resulting public URLs will be saved in the resource record.
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public MediaResourceResponse createWithFile(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam("files") List<MultipartFile> files,
             @RequestParam("title") String title,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam("type") ResourceType type,
             @RequestParam("categoryId") Long categoryId
     ) throws Exception {
-        StorageUploadResponse resp = storageService.uploadFile(file);
+        if (files == null || files.isEmpty()) {
+            throw new IllegalArgumentException("At least one file is required");
+        }
+
+        List<StorageUploadResponse> uploads = new java.util.ArrayList<>();
+        for (MultipartFile file : files) {
+            uploads.add(storageService.uploadFile(file));
+        }
+
+        List<String> fileUrls = uploads.stream()
+                .map(StorageUploadResponse::getUrl)
+                .toList();
+
         MediaResourceRequest req = MediaResourceRequest.builder()
                 .title(title)
                 .description(description)
-                .url(resp.getUrl())
+                .url(fileUrls.get(0))
+                .fileUrls(fileUrls)
                 .type(type)
                 .categoryId(categoryId)
                 .build();

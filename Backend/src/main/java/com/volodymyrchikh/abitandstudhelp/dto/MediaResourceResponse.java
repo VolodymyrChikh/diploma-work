@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,6 +19,7 @@ public class MediaResourceResponse {
     private String title;
     private String description;
     private String url;
+    private List<String> fileUrls;
     private ResourceType type;
     private CategoryResponse category;
     private Integer views;

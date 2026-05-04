@@ -2,7 +2,8 @@ package com.volodymyrchikh.abitandstudhelp.common;
 
 public enum ResourceType {
     DOCUMENT,
-    VIDEO_LINK,
+    VIDEO,
+    IMAGE,
     EXTERNAL_LINK,
-    IMAGE
+    VIDEO_LINK
 }
