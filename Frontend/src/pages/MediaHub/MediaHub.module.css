@@ -2,8 +2,7 @@
   --sand: #fbf4f4;
   --clay: #efe6e4;
   --ink: #1e1b18;
-  --accent: #9b4d57;
-  /* unified site red */
+  --accent: #9b4d57; /* unified site red */
   --muted: #c7bfbf;
   background: linear-gradient(180deg, #fffdfc 0%, #fbf4f4 60%);
   min-height: 100vh;
@@ -83,7 +82,7 @@
 }
 
 .categoryActive {
-  background: rgba(155, 77, 87, 0.08);
+  background: rgba(155,77,87,0.08);
   color: var(--accent);
   font-weight: 600;
 }
@@ -120,16 +119,15 @@
   z-index: 5;
 }
 
-.filtersDropdown>summary {
+.filtersDropdown > summary {
   list-style: none;
 }
 
-.filtersDropdown>summary::-webkit-details-marker {
+.filtersDropdown > summary::-webkit-details-marker {
   display: none;
 }
 
 .filtersToggle {
-  width: 100%;
   border: 1px solid var(--muted);
   background: #ffffff;
   border-radius: 18px;
@@ -143,7 +141,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  box-sizing: border-box;
 }
 
 .filtersToggle::after {
@@ -160,7 +157,7 @@
 .filtersPanel {
   position: absolute;
   top: calc(100% + 10px);
-  width: 100%;
+  width: 300px;
   background: #ffffff;
   border: 1px solid var(--muted);
   border-radius: 18px;
@@ -169,7 +166,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-sizing: border-box;
 }
 
 .filterGroup {
@@ -211,10 +207,9 @@
   width: 100%;
   height: 44px;
   line-height: 28px;
-  border-radius: 12px;
+  border-radius: 999px;
   border: 1px solid var(--muted);
-  padding: 0 44px 0 42px;
-  /* leave space for clear button */
+  padding: 0 44px 0 42px; /* leave space for clear button */
   font-family: "Fixel", sans-serif;
   font-size: 15px;
   outline: none;
@@ -228,8 +223,8 @@
 }
 
 .searchInput:focus {
-  border-color: rgba(155, 77, 87, 0.35);
-  box-shadow: 0 6px 18px rgba(155, 77, 87, 0.08);
+  border-color: rgba(155,77,87,0.35);
+  box-shadow: 0 6px 18px rgba(155,77,87,0.08);
 }
 
 .searchInput {
@@ -281,7 +276,7 @@
 .searchButton {
   border: 1px solid var(--accent);
   padding: 12px 20px;
-  border-radius: 12px;
+  border-radius: 999px;
   background: var(--accent);
   color: #ffffff;
   font-family: "Fixel SemiBold", "Fixel", sans-serif;
@@ -315,9 +310,9 @@
 }
 
 .filterOptionActive {
-  background: rgba(155, 77, 87, 0.1);
+  background: rgba(155,77,87,0.1);
   color: var(--accent);
-  border-color: rgba(155, 77, 87, 0.3);
+  border-color: rgba(155,77,87,0.3);
   font-weight: 600;
 }
 
@@ -366,7 +361,7 @@
 .loadMore {
   border: 1px solid var(--accent);
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 999px;
   background: var(--accent);
   color: #ffffff;
   font-family: "Fixel", sans-serif;
@@ -424,293 +419,5 @@
   .topBar {
     flex-direction: column;
     align-items: stretch;
-  }
-}
-
-.heroText {
-  display: flex;
-  flex-direction: column;
-}
-
-.hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.uploadButton {
-  background: var(--accent);
-  color: #ffffff;
-  border: 1px solid rgba(155, 77, 87, 0.4);
-  border-radius: 12px;
-  padding: 12px 22px;
-  font-family: "Fixel SemiBold", "Fixel", sans-serif;
-  font-size: 14px;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  box-shadow: 0 14px 24px rgba(155, 77, 87, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.uploadButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 18px 34px rgba(155, 77, 87, 0.18);
-  background: #8a444d;
-}
-
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(30, 27, 24, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 24px;
-}
-
-.modalContent {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 520px;
-  border: 1px solid var(--muted);
-  box-shadow: 0 16px 40px rgba(20, 20, 20, 0.12);
-}
-
-.modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.modalHeader h2 {
-  margin: 0;
-  font-family: "Fixel", sans-serif;
-  font-size: 20px;
-  color: var(--ink);
-}
-
-.closeButton {
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  width: 32px;
-  height: 32px;
-  font-size: 20px;
-  cursor: pointer;
-  color: #8f8f8f;
-  display: grid;
-  place-items: center;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.closeButton:hover {
-  background: #f5f5f5;
-  color: #5a5a5a;
-}
-
-.uploadForm {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.formGroup label {
-  font-family: "Fixel", sans-serif;
-  font-weight: 500;
-  color: var(--ink);
-  font-size: 13px;
-  letter-spacing: 0.02em;
-}
-
-.formGroup input[type="text"],
-.formGroup textarea,
-.formGroup select {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 14px;
-  border: 1px solid #e8e8e8;
-  border-radius: 10px;
-  font-family: "Fixel", sans-serif;
-  font-size: 14px;
-  background: #ffffff;
-  color: var(--ink);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.formGroup select {
-  appearance: none;
-  background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="%238a444d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 38px;
-  cursor: pointer;
-}
-
-input[type="file"]::file-selector-button {
-  background-color: #8a444d;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-input[type="file"]::file-selector-button:hover {
-  background-color: #854246;
-}
-
-.formGroup select option {
-  background: #ffffff;
-  color: var(--ink);
-  padding: 8px 12px;
-}
-
-.formGroup select option:hover {
-  background: rgba(155, 77, 87, 0.1);
-  color: var(--accent);
-}
-
-.formGroup input[type="text"]:focus,
-.formGroup textarea:focus,
-.formGroup select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(155, 77, 87, 0.08);
-  outline: none;
-}
-
-.formGroup textarea {
-  resize: vertical;
-  min-height: 80px;
-  font-family: "Fixel", sans-serif;
-}
-
-.hiddenFileInput {
-  display: none;
-}
-
-.fileUploadWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.fileInputCustom {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px dashed #e0e0e0;
-  border-radius: 10px;
-  padding: 14px 52px 14px 14px;
-  background: #fafafa;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-}
-
-.fileInputCustom:hover {
-  border-color: var(--accent);
-}
-
-.customButton {
-  background-color: #8a444d;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-family: "Fixel", sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  transition: background 0.3s;
-}
-
-.fileInputCustom:hover .customButton {
-  background-color: #854246;
-}
-
-.fileName {
-  font-family: "Fixel", sans-serif;
-  font-size: 14px;
-  color: #666666;
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; 
-}
-
-.fileInput {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px dashed #e0e0e0;
-  border-radius: 10px;
-  padding: 14px;
-  background: #fafafa;
-  font-family: "Fixel", sans-serif;
-  font-size: 13px;
-  color: #666666;
-}
-
-.formRow {
-  display: flex;
-  gap: 12px;
-}
-
-.formRow .formGroup {
-  flex: 1;
-}
-
-.submitUpload {
-  background: #ffffff;
-  color: #8a444d;
-  border: 1px solid #e8e8e8;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-family: "Fixel", sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
-  box-shadow: 0 4px 12px rgba(155, 77, 87, 0.15);
-}
-
-.submitUpload:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.submitUpload:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 18px 34px rgba(155, 77, 87, 0.18);
-  background: #8a444d;
-  color: #ffffff;
-}
-
-@media (max-width: 640px) {
-  .modalContent {
-    padding: 22px;
-  }
-
-  .formRow {
-    flex-direction: column;
-  }
-
-  .uploadButton {
-    width: 100%;
-    justify-content: center;
   }
 }

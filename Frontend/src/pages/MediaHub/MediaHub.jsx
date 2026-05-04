@@ -23,84 +23,6 @@ function MediaHub() {
     loading: false,
   });
   const searchInputRef = useRef(null);
-  const fileInputRef = useRef(null);
-
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [uploadData, setUploadData] = useState({
-    title: "",
-    description: "",
-    type: "DOCUMENT",
-    categoryId: ""
-  });
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [fileName, setFileName] = useState("Жоден файл не вибраний");
-  const [isUploading, setIsUploading] = useState(false);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
-    if (file) {
-      setFileName(file.name);
-    } else {
-      setFileName("Жоден файл не вибраний");
-    }
-  };
-
-  const handleClearFile = () => {
-    setSelectedFile(null);
-    setFileName("Жоден файл не вибраний");
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleCloseUploadModal = () => {
-    handleClearFile();
-    setIsUploadModalOpen(false);
-  };
-
-  const handleUploadInputChange = (e) => {
-    const { name, value } = e.target;
-    setUploadData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleUploadSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedFile || !uploadData.title || !uploadData.categoryId) {
-      alert("Будь ласка, заповніть обов'язкові поля та виберіть файл.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("title", uploadData.title);
-    if (uploadData.description) formData.append("description", uploadData.description);
-    formData.append("type", uploadData.type);
-    formData.append("categoryId", uploadData.categoryId);
-
-    try {
-      setIsUploading(true);
-      const token = localStorage.getItem("token") || localStorage.getItem("authToken");
-      await axios.post("http://localhost:9000/api/media/upload", formData, {
-        headers: { 
-          "Content-Type": "multipart/form-data",
-          "Authorization": token ? `Bearer ${token}` : ""
-        }
-      });
-      
-      setUploadData({ title: "", description: "", type: "DOCUMENT", categoryId: "" });
-      handleClearFile();
-      setIsUploadModalOpen(false);
-      
-      fetchResources({ page: 0, append: false });
-    } catch (error) {
-      console.error("Помилка завантаження матеріалу:", error);
-      alert("Не вдалося завантажити. Спробуйте ще раз.");
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -257,18 +179,10 @@ function MediaHub() {
       <Header />
       <section className={styles.mediaHub}>
         <div className={styles.hero}>
-          <div className={styles.heroText}>
-            <h1 className={styles.title}>Медіатека</h1>
-            <p className={styles.subtitle}>
-              Всі корисні матеріали в одному місці: важливі документи, відео, фото та багато іншого.
-            </p>
-          </div>
-          <button 
-            className={styles.uploadButton} 
-            onClick={() => setIsUploadModalOpen(true)}
-          >
-            + Додати матеріал
-          </button>
+          <h1 className={styles.title}>Медіатека</h1>
+          <p className={styles.subtitle}>
+            Всі корисні матеріали в одному місці: важливі документи, відео, фото та багато іншого.
+          </p>
         </div>
         <div className={styles.layout}>
           <aside className={styles.sidebar}>
@@ -383,7 +297,7 @@ function MediaHub() {
                         className={`${styles.filterOption} ${activeOrder === "newest" ? styles.filterOptionActive : ""}`}
                         onClick={() => handleOrderSelect("newest")}
                       >
-                        Найновіші
+                        Новододані
                       </button>
                       <button
                         type="button"
@@ -391,6 +305,13 @@ function MediaHub() {
                         onClick={() => handleOrderSelect("oldest")}
                       >
                         Найстаріші
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.filterOption} ${activeOrder === "longAgo" ? styles.filterOptionActive : ""}`}
+                        onClick={() => handleOrderSelect("longAgo")}
+                      >
+                        Давнододані
                       </button>
                     </div>
                   </div>
@@ -431,105 +352,6 @@ function MediaHub() {
           </main>
         </div>
       </section>
-
-      {isUploadModalOpen && (
-        <div className={styles.modalOverlay} onClick={handleCloseUploadModal}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h2>Додати матеріал</h2>
-              <button className={styles.closeButton} onClick={handleCloseUploadModal} type="button">
-                &times;
-              </button>
-            </div>
-
-            <form onSubmit={handleUploadSubmit} className={styles.uploadForm}>
-              <div className={styles.formGroup}>
-                <label>Назва *</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={uploadData.title}
-                  onChange={handleUploadInputChange}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Опис</label>
-                <textarea
-                  name="description"
-                  value={uploadData.description}
-                  onChange={handleUploadInputChange}
-                  rows="3"
-                ></textarea>
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Тип *</label>
-                  <select
-                    name="type"
-                    value={uploadData.type}
-                    onChange={handleUploadInputChange}
-                    required
-                  >
-                    <option value="DOCUMENT">Документ</option>
-                    <option value="VIDEO_LINK">Відео</option>
-                    <option value="EXTERNAL_LINK">Зовнішній лінк</option>
-                    <option value="IMAGE">Світлина</option>
-                  </select>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Категорія *</label>
-                  <select
-                    name="categoryId"
-                    value={uploadData.categoryId}
-                    onChange={handleUploadInputChange}
-                    required
-                  >
-                    <option value="" disabled>Оберіть категорію</option>
-                    {categories
-                      .filter((c) => c.id)
-                      .map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Файл *</label>
-                <div className={styles.fileUploadWrapper}>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    id="file-upload"
-                    onChange={handleFileChange}
-                    required
-                    className={styles.hiddenFileInput}
-                  />
-                  <label htmlFor="file-upload" className={styles.fileInputCustom}>
-                    <span className={styles.customButton}>Вибрати файл</span>
-                    <span className={styles.fileName}>{fileName}</span>
-                  </label>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className={styles.submitUpload}
-                disabled={isUploading}
-              >
-                {isUploading ? "Завантаження..." : "Зберегти"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
       <Footer />
     </>
   );
