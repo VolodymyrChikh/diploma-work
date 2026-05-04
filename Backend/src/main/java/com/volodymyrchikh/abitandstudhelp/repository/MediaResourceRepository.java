@@ -12,12 +12,19 @@ import java.util.List;
 import java.util.UUID;
 
 public interface MediaResourceRepository extends JpaRepository<MediaResource, UUID> {
-    Page<MediaResource> findAllByCategoryNameAndType(String categoryName, ResourceType type, Pageable pageable);
-    Page<MediaResource> findAllByCategoryName(String categoryName, Pageable pageable);
-    Page<MediaResource> findAllByType(ResourceType type, Pageable pageable);
+
+    @Query("SELECT m FROM MediaResource m WHERE m.category.name = :categoryName")
+    Page<MediaResource> findAllByCategoryName(@Param("categoryName") String categoryName, Pageable pageable);
+
+    @Query("SELECT m FROM MediaResource m WHERE m.category.name = :categoryName AND m.type = :type")
+    Page<MediaResource> findAllByCategoryNameAndType(@Param("categoryName") String categoryName, @Param("type") ResourceType type, Pageable pageable);
+
+    @Query("SELECT m FROM MediaResource m WHERE m.type = :type")
+    Page<MediaResource> findAllByType(@Param("type") ResourceType type, Pageable pageable);
 
     @Query("SELECT m FROM MediaResource m WHERE lower(m.title) LIKE lower(concat('%', :query, '%')) OR lower(m.description) LIKE lower(concat('%', :query, '%'))")
     Page<MediaResource> search(@Param("query") String query, Pageable pageable);
 
-    List<MediaResource> findTop5ByOrderByCreatedAtDesc();
+    @Query("SELECT m FROM MediaResource m ORDER BY m.createdAt DESC")
+    List<MediaResource> findTop5ByOrderByCreatedAtDesc(Pageable pageable);
 }

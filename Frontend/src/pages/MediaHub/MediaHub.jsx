@@ -32,23 +32,122 @@ function MediaHub() {
     type: "DOCUMENT",
     categoryId: ""
   });
-  const [selectedFile, setSelectedFile] = useState(null);
+  const INITIAL_UPLOAD_STATE = {
+    title: "",
+    description: "",
+    type: "DOCUMENT",
+    categoryId: ""
+  };
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileName, setFileName] = useState("Жоден файл не вибраний");
   const [isUploading, setIsUploading] = useState(false);
+  const [fileError, setFileError] = useState("");
+
+  const MAX_FILE_SIZE = {
+    DOCUMENT: 50 * 1024 * 1024, // 50MB
+    VIDEO_LINK: 50 * 1024 * 1024,   // 50MB
+    IMAGE: 50 * 1024 * 1024,    // 50MB
+    EXTERNAL_LINK: 0
+  };
+
+  const getAcceptAttribute = () => {
+    switch (uploadData.type) {
+      case "VIDEO_LINK":
+        return "video/*";
+      case "IMAGE":
+        return "image/*";
+      case "DOCUMENT":
+      default:
+        return "";
+    }
+  };
+
+  const validateFileType = (files) => {
+    if (uploadData.type === "DOCUMENT") {
+      return validateFileSize(files);
+    }
+
+    const allowedTypes = {
+      VIDEO_LINK: ["video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/mpeg",
+         "video/x-msvideo", "video/mov"],
+      IMAGE: ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
+         "image/avif", "image/heic", "image/heif", "image/tiff", "image/bmp",
+          "image/x-icon", "image/vnd.microsoft.icon"],
+    };
+
+    const validTypes = allowedTypes[uploadData.type] || [];
+    const invalidFiles = [];
+
+    files.forEach((file) => {
+      const isValid = validTypes.some((type) => file.type === type || file.type.startsWith(type.split("/")[0] + "/"));
+      if (!isValid) {
+        invalidFiles.push(file.name);
+      }
+    });
+
+    if (invalidFiles.length > 0) {
+      const typeLabel = uploadData.type === "VIDEO_LINK" ? "відео" : "світлини";
+      setFileError(`Невідповідні файли (${typeLabel}): ${invalidFiles.join(", ")}`);
+      return false;
+    }
+
+    setFileError("");
+    return validateFileSize(files);
+  };
+
+  const validateFileSize = (files) => {
+    const maxSize = MAX_FILE_SIZE[uploadData.type] || MAX_FILE_SIZE.DOCUMENT;
+    const oversizedFiles = [];
+
+    files.forEach((file) => {
+      if (file.size > maxSize) {
+        oversizedFiles.push({
+          name: file.name,
+          size: (file.size / (1024 * 1024)).toFixed(2),
+          max: (maxSize / (1024 * 1024)).toFixed(0)
+        });
+      }
+    });
+
+    if (oversizedFiles.length > 0) {
+      const errorMsg = oversizedFiles
+        .map(f => `${f.name} (${f.size}MB, макс: ${f.max}MB)`)
+        .join(", ");
+      setFileError(`Файли занадто великі: ${errorMsg}`);
+      return false;
+    }
+
+    setFileError("");
+    return true;
+  };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
-    if (file) {
-      setFileName(file.name);
+    const files = Array.from(e.target.files || []);
+    
+    if (files.length > 0 && !validateFileType(files)) {
+      setSelectedFiles([]);
+      setFileName("Жоден файл не вибраний");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    setSelectedFiles(files);
+    setFileError("");
+    if (files.length === 1) {
+      setFileName(files[0].name);
+    } else if (files.length > 1) {
+      setFileName(`${files.length} файлів вибрано`);
     } else {
       setFileName("Жоден файл не вибраний");
     }
   };
 
   const handleClearFile = () => {
-    setSelectedFile(null);
+    setSelectedFiles([]);
     setFileName("Жоден файл не вибраний");
+    setFileError("");
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -56,6 +155,7 @@ function MediaHub() {
   };
 
   const handleCloseUploadModal = () => {
+    setUploadData({ ...INITIAL_UPLOAD_STATE });
     handleClearFile();
     setIsUploadModalOpen(false);
   };
@@ -63,17 +163,24 @@ function MediaHub() {
   const handleUploadInputChange = (e) => {
     const { name, value } = e.target;
     setUploadData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear files and error when type changes
+    if (name === "type") {
+      handleClearFile();
+    }
   };
 
   const handleUploadSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedFile || !uploadData.title || !uploadData.categoryId) {
-      alert("Будь ласка, заповніть обов'язкові поля та виберіть файл.");
+    if (selectedFiles.length === 0 || !uploadData.title || !uploadData.categoryId) {
+      alert("Будь ласка, заповніть обов'язкові поля та виберіть хоча б один файл.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", selectedFile);
+    selectedFiles.forEach((file) => {
+      formData.append("files", file);
+    });
     formData.append("title", uploadData.title);
     if (uploadData.description) formData.append("description", uploadData.description);
     formData.append("type", uploadData.type);
@@ -83,20 +190,37 @@ function MediaHub() {
       setIsUploading(true);
       const token = localStorage.getItem("token") || localStorage.getItem("authToken");
       await axios.post("http://localhost:9000/api/media/upload", formData, {
-        headers: { 
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
           "Content-Type": "multipart/form-data",
-          "Authorization": token ? `Bearer ${token}` : ""
-        }
+        },
+        timeout: 300000, // 5 minutes timeout for large files
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
       });
       
-      setUploadData({ title: "", description: "", type: "DOCUMENT", categoryId: "" });
+      setUploadData({ ...INITIAL_UPLOAD_STATE });
       handleClearFile();
       setIsUploadModalOpen(false);
-      
+      alert("Матеріал успішно завантажено!");
       fetchResources({ page: 0, append: false });
     } catch (error) {
       console.error("Помилка завантаження матеріалу:", error);
-      alert("Не вдалося завантажити. Спробуйте ще раз.");
+      
+      let errorMessage = "Не вдалося завантажити. Спробуйте ще раз.";
+      if (error.code === "ECONNABORTED") {
+        errorMessage = "Час очікування вичерпаний. Спробуйте завантажити менший файл.";
+      } else if (error.message === "Network Error") {
+        errorMessage = "Помилка мережі. Перевірте з'єднання та спробуйте ще раз.";
+      } else if (error.response?.status === 413) {
+        errorMessage = "Файл занадто великий. Використовуйте файл меншого розміру.";
+      } else if (error.response?.status === 500) {
+        errorMessage = "Помилка сервера. Спробуйте ще раз пізніше.";
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsUploading(false);
     }
@@ -116,7 +240,23 @@ function MediaHub() {
   }, []);
 
   const updatePageInfo = (pageData, isAppending) => {
-    setResources((prev) => (isAppending ? [...prev, ...pageData.content] : pageData.content));
+    setResources((prev) => {
+      const nextResources = isAppending ? [...prev, ...pageData.content] : pageData.content;
+      const uniqueResources = [];
+      const seenIds = new Set();
+
+      nextResources.forEach((resource) => {
+        const key = resource?.id || `${resource?.title || ""}-${resource?.createdAt || ""}`;
+        if (seenIds.has(key)) {
+          return;
+        }
+
+        seenIds.add(key);
+        uniqueResources.push(resource);
+      });
+
+      return uniqueResources;
+    });
     setPageInfo({
       page: pageData.number,
       totalPages: pageData.totalPages,
@@ -220,7 +360,8 @@ function MediaHub() {
   };
 
   const handleOpenResource = async (resource) => {
-    if (!resource?.id || !resource?.url) {
+    const resourceUrl = resource?.url || resource?.fileUrls?.[0];
+    if (!resource?.id || !resourceUrl) {
       return;
     }
 
@@ -232,7 +373,7 @@ function MediaHub() {
       console.error("Error incrementing views:", error);
     }
 
-    window.open(resource.url, "_blank", "noopener,noreferrer");
+    window.open(resourceUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleCategoryClick = (categoryName) => {
@@ -353,7 +494,7 @@ function MediaHub() {
                       </button>
                       <button
                         type="button"
-                        className={`${styles.filterOption} ${activeType === "VIDEO_LINK" ? styles.filterOptionActive : ""}`}
+                        className={`${styles.filterOption} ${activeType === "VIDEO_LINK" || "VIDEO" ? styles.filterOptionActive : ""}`}
                         onClick={() => handleTypeToggle("VIDEO_LINK")}
                       >
                         Відео
@@ -475,8 +616,8 @@ function MediaHub() {
                   >
                     <option value="DOCUMENT">Документ</option>
                     <option value="VIDEO_LINK">Відео</option>
-                    <option value="EXTERNAL_LINK">Зовнішній лінк</option>
                     <option value="IMAGE">Світлина</option>
+                    <option value="EXTERNAL_LINK">Зовнішній лінк</option>
                   </select>
                 </div>
 
@@ -501,21 +642,31 @@ function MediaHub() {
               </div>
 
               <div className={styles.formGroup}>
-                <label>Файл *</label>
+                <label>Файли *</label>
+                <div style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>
+                  Максимальний розмір: {uploadData.type === "VIDEO_LINK" ? "50MB" : uploadData.type === "IMAGE" ? "50MB" : "50MB"}
+                </div>
                 <div className={styles.fileUploadWrapper}>
                   <input
                     ref={fileInputRef}
                     type="file"
                     id="file-upload"
+                    multiple
                     onChange={handleFileChange}
                     required
+                    accept={getAcceptAttribute()}
                     className={styles.hiddenFileInput}
                   />
                   <label htmlFor="file-upload" className={styles.fileInputCustom}>
-                    <span className={styles.customButton}>Вибрати файл</span>
+                    <span className={styles.customButton}>Вибрати файли</span>
                     <span className={styles.fileName}>{fileName}</span>
                   </label>
                 </div>
+                {fileError && (
+                  <div style={{ color: "#9b4d57", fontSize: "14px", marginTop: "8px", fontWeight: "500" }}>
+                    {fileError}
+                  </div>
+                )}
               </div>
 
               <button

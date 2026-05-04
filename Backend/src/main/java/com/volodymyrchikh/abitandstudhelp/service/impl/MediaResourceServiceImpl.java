@@ -12,6 +12,7 @@ import com.volodymyrchikh.abitandstudhelp.repository.CategoryRepository;
 import com.volodymyrchikh.abitandstudhelp.repository.MediaResourceRepository;
 import com.volodymyrchikh.abitandstudhelp.service.MediaResourceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,7 @@ public class MediaResourceServiceImpl implements MediaResourceService {
     @Override
     @Transactional(readOnly = true)
     public List<MediaResourceResponse> getLatest() {
-        return repository.findTop5ByOrderByCreatedAtDesc()
+        return repository.findTop5ByOrderByCreatedAtDesc(PageRequest.of(0, 5))
                 .stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
@@ -75,6 +76,7 @@ public class MediaResourceServiceImpl implements MediaResourceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
         MediaResource entity = mapper.toEntity(request);
+        applyFileUrls(entity, request);
         entity.setCategory(category);
         entity.setViews(0);
 
@@ -91,6 +93,7 @@ public class MediaResourceServiceImpl implements MediaResourceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
         mapper.updateEntity(entity, request);
+        applyFileUrls(entity, request);
         entity.setCategory(category);
 
         return mapper.toResponse(repository.save(entity));
@@ -124,5 +127,28 @@ public class MediaResourceServiceImpl implements MediaResourceService {
         }
         entity.setViews(entity.getViews() + 1);
         repository.save(entity);
+    }
+
+    private void applyFileUrls(MediaResource entity, MediaResourceRequest request) {
+        List<String> fileUrls = normalizeFileUrls(request);
+        entity.setFileUrls(new java.util.ArrayList<>(fileUrls));
+        entity.setUrl(fileUrls.get(0));
+    }
+
+    private List<String> normalizeFileUrls(MediaResourceRequest request) {
+        List<String> fileUrls = request.getFileUrls() == null ? List.of() : request.getFileUrls().stream()
+                .filter(url -> url != null && !url.isBlank())
+                .map(String::trim)
+                .toList();
+
+        if (!fileUrls.isEmpty()) {
+            return List.copyOf(fileUrls);
+        }
+
+        if (request.getUrl() != null && !request.getUrl().isBlank()) {
+            return List.of(request.getUrl().trim());
+        }
+
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one file URL is required");
     }
 }
