@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:abitandstudhelp-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
+  ai:
+    google:
+      genai:
+        api-key: test-gemini-api-key
+
+storage:
+  endpoint: http://localhost:4566
+  region: us-east-1
+  access-key: test-storage-access-key
+  secret-key: test-storage-secret-key
+  bucket: test-bucket
+  path-style-access: true
+  public-base-url:
+
+jwt:
+  secret-key: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=

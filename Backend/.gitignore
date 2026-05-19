@@ -1,0 +1,52 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# Local secrets and credentials
+.env
+.env.*
+application-local.yml
+application-dev-local.yml
+src/main/resources/application-local.yml
+src/main/resources/application-dev-local.yml
+application_default_credentials.json
+client_secret_*.json
+*client*secret*.json
+src/main/resources/client_secret_*.json
+src/main/resources/*client*secret*.json
+tokens/
+**/tokens/

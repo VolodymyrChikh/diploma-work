@@ -1,0 +1,25 @@
+# Local secrets and credentials
+.env
+.env.*
+!.env.example
+application-local.yml
+application-dev-local.yml
+Backend/src/main/resources/application-local.yml
+Backend/src/main/resources/application-dev-local.yml
+application_default_credentials.json
+client_secret_*.json
+*client*secret*.json
+**/tokens/
+
+# Build outputs and dependencies
+**/node_modules/
+**/dist/
+**/dist-ssr/
+Backend/.gradle/
+Backend/build/
+
+# Editor/system files
+.DS_Store
+.idea/
+.vscode/
+*.sw?
