@@ -58,8 +58,9 @@ public class CommentController {
     @PreAuthorize("@authorizationService.canManageComment(#id)")
     @DeleteMapping("/{id}")
     public void deleteById(@P("id") @PathVariable Long id,
-                           @RequestParam(required = false) String reason) {
-        commentService.delete(id, reason);
+                           @RequestParam(required = false) String reason,
+                           @RequestParam(required = false) String notificationType) {
+        commentService.delete(id, reason, notificationType);
     }
 
     @DeleteMapping("/{id}/by-rules")

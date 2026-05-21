@@ -134,29 +134,40 @@ public class PostService {
     }
 
     public void delete(Long postId) {
-        delete(postId, null);
+        delete(postId, null, null);
     }
 
-    public void delete(Long postId, String deletionReason) {
+    public void delete(Long postId, String deletionReason, String notificationTypeValue) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("Допис не знайдено", postId));
 
         Long postOwnerId = post.getUser() != null ? post.getUser().getId() : null;
         postRepository.delete(post);
 
-        // Notify the post owner if it was deleted by an admin with a reason and it's not their own post
         if (deletionReason != null && !deletionReason.isBlank() && postOwnerId != null) {
-            notifyPostOwnerAboutDeletion(postOwnerId, deletionReason);
+            notifyPostOwnerAboutDeletion(postOwnerId, deletionReason, notificationTypeValue);
         }
     }
 
-    private void notifyPostOwnerAboutDeletion(Long postOwnerId, String deletionReason) {
+    private void notifyPostOwnerAboutDeletion(Long postOwnerId, String deletionReason, String notificationTypeValue) {
         NotificationRequest notificationRequest = NotificationRequest.builder()
-                .type(NotificationType.ADMIN_MESSAGE.getName())
+                .type(resolveNotificationType(notificationTypeValue).getName())
                 .message("Ваш допис був видалений адміністратором. Причина: " + deletionReason)
                 .userId(postOwnerId)
                 .build();
         notificationService.create(notificationRequest);
+    }
+
+    private NotificationType resolveNotificationType(String notificationTypeValue) {
+        if (notificationTypeValue == null || notificationTypeValue.isBlank()) {
+            return NotificationType.ADMIN_MESSAGE;
+        }
+
+        try {
+            return NotificationType.forValue(notificationTypeValue);
+        } catch (IllegalArgumentException ignored) {
+            return NotificationType.ADMIN_MESSAGE;
+        }
     }
 
     public PostResponse likePost(Long postId, Long userId) {

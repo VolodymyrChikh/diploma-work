@@ -91,11 +91,6 @@ function Header(){
                     <li><NavLink to="/about-specialties" className={getDesktopNavLinkClassName}>Про спеціальності</NavLink></li>
                 </ul>
                 <div className="inline-flex items-center gap-3 max-[520px]:gap-2">
-                    <AmiIconButton type="button" className="max-[520px]:hidden" aria-label="Пошук">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M10.7 5.2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Zm0-1.7a7.2 7.2 0 1 0 4.45 12.85l3.76 3.76 1.2-1.2-3.76-3.76A7.2 7.2 0 0 0 10.7 3.5Z" fill="currentColor" />
-                        </svg>
-                    </AmiIconButton>
                     <div className="relative shrink-0">
                         <button
                             type="button"

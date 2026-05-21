@@ -13,6 +13,7 @@ import { apiFetch } from '../../api/client';
 import { createStatus, getErrorMessage } from '../../utils/messages.js';
 import { formatCommentCount } from '../../utils/commentText.js';
 import { cn } from '../../ui/cn.js';
+import DeleteConfirmation from '../DeleteConfirmation/DeleteConfirmation';
 
 function Post({
     id,
@@ -130,20 +131,22 @@ function Post({
             navigate(redirect.to, redirect.options);
             return;
         }
-
-        if (!window.confirm('Ви впевнені, що хочете видалити цей пост?')) {
-            return;
-        }
-
-        setIsDeleting(true);
         setShowDropdown(false);
-        let deletedFromFeed = false;
+        setShowDeleteModal(true);
+    };
 
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const performDelete = async ({ reason, notificationType }) => {
+        setIsDeleting(true);
+        setShowDeleteModal(false);
+        let deletedFromFeed = false;
         try {
             setActionStatus(null);
-            const response = await apiFetch(`/posts/${id}`, {
-                method: 'DELETE'
-            });
+            let deleteUrl = `/posts/${id}`;
+            deleteUrl += `?reason=${encodeURIComponent(reason)}&notificationType=${encodeURIComponent(notificationType)}`;
+
+            const response = await apiFetch(deleteUrl, { method: 'DELETE' });
 
             if (response.ok) {
                 deletedFromFeed = Boolean(onDeleted);
@@ -155,9 +158,7 @@ function Post({
                     navigate,
                     location: { pathname: detailPath },
                     message,
-                })) {
-                    return;
-                }
+                })) return;
 
                 setActionStatus(createStatus('error', message));
             }
@@ -165,9 +166,7 @@ function Post({
             console.error('Error deleting post:', error);
             setActionStatus(createStatus('error', getErrorMessage(error, 'Помилка при видаленні поста')));
         } finally {
-            if (!deletedFromFeed) {
-                setIsDeleting(false);
-            }
+            if (!deletedFromFeed) setIsDeleting(false);
         }
     };
 
@@ -259,6 +258,7 @@ function Post({
     const categoryName = categoryResponse?.name ? categoryResponse.name : 'Без категорії';
 
     return (
+        <>
         <article
             key={id}
             className="group relative m-3 grid cursor-pointer gap-4 rounded-ami border border-border bg-white px-4 py-4 shadow-[var(--shadow-ami-xs)] transition-[background-color,border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-accent/35 hover:shadow-[var(--shadow-ami-sm)] focus-within:border-accent/35 focus-within:shadow-[var(--shadow-ami-sm)] motion-reduce:hover:translate-y-0 sm:px-5 sm:py-5"
@@ -336,7 +336,7 @@ function Post({
                     </footer>
                 </div>
 
-                {isCurrentUserPost && (
+                {(isCurrentUserPost || user?.role === 'ROLE_ADMIN') && (
                     <div className="relative shrink-0" ref={dropdownRef}>
                         <button
                             type="button"
@@ -391,6 +391,14 @@ function Post({
                 </div>
             )}
         </article>
+        <DeleteConfirmation
+            open={showDeleteModal}
+            title="Підтвердження видалення"
+            message="Вкажіть обов'язкову причину видалення та виберіть тип сповіщення для користувача."
+            onCancel={() => setShowDeleteModal(false)}
+            onConfirm={(payload) => performDelete(payload)}
+        />
+        </>
     );
 }
 

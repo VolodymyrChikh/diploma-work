@@ -18,6 +18,7 @@ import { formatCommentCount } from '../../utils/commentText.js';
 import { addCommentToTop, removeComment, replaceComment } from '../../utils/commentList.js';
 import { AmiButton, AmiContainer, AmiPanel } from '../../ui/ami.jsx';
 import { cn } from '../../ui/cn.js';
+import DeleteConfirmation from '../../components/DeleteConfirmation/DeleteConfirmation';
 
 const COMMENT_MAX_LENGTH = 1200;
 
@@ -293,7 +294,7 @@ function PostDetail() {
         }
     };
 
-    const handleDeleteComment = async (commentId) => {
+    const handleDeleteComment = async (commentId, reason, notificationType) => {
         if (!canUseAuthenticatedAction({ isAuthenticated, user })) {
             const redirect = createSignInRedirect(
                 { pathname: `/forum/post/${slug}` },
@@ -307,7 +308,10 @@ function PostDetail() {
         setCommentError(null);
 
         try {
-            const response = await apiFetch(`/comments/${commentId}`, {
+            let deleteUrl = `/comments/${commentId}`;
+            deleteUrl += `?reason=${encodeURIComponent(reason)}&notificationType=${encodeURIComponent(notificationType)}`;
+
+            const response = await apiFetch(deleteUrl, {
                 method: 'DELETE',
             });
 
@@ -448,6 +452,8 @@ function PostDetail() {
         }
     };
 
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
     const handleDeletePost = async () => {
         if (!canUseAuthenticatedAction({ isAuthenticated, user })) {
             const redirect = createSignInRedirect(
@@ -458,24 +464,24 @@ function PostDetail() {
             return;
         }
 
-        if (!window.confirm('Ви впевнені, що хочете видалити цей пост?')) {
-            return;
-        }
+        // open modal for confirmation and optional reason
+        setDeleteModalOpen(true);
+    };
 
+    const performDeletePost = async ({ reason, notificationType }) => {
+        setDeleteModalOpen(false);
         setIsDeletingPost(true);
         setPostStatus(null);
 
         try {
-            const response = await apiFetch(`/posts/${post.id}`, {
-                method: 'DELETE',
-            });
+            let deleteUrl = `/posts/${post.id}`;
+            deleteUrl += `?reason=${encodeURIComponent(reason)}&notificationType=${encodeURIComponent(notificationType)}`;
+
+            const response = await apiFetch(deleteUrl, { method: 'DELETE' });
 
             if (!response.ok) {
                 const message = await getProtectedActionErrorMessage(response, 'Не вдалося видалити пост');
-                if (redirectOnAuthFailure(response, message)) {
-                    return;
-                }
-
+                if (redirectOnAuthFailure(response, message)) return;
                 throw new Error(message);
             }
 
@@ -578,20 +584,22 @@ function PostDetail() {
                                 </div>
                             </div>
 
-                            {isOwnPost && !isEditingPost && (
+                            {(isOwnPost || user?.role === 'ROLE_ADMIN') && !isEditingPost && (
                                 <div className="flex flex-wrap gap-2" aria-label="Дії з постом">
-                                    <AmiButton
-                                        variant="secondary"
-                                        size="sm"
-                                        onClick={handleStartPostEdit}
-                                        disabled={isSavingPost || isDeletingPost}
-                                    >
-                                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                    {isOwnPost && (
+                                        <AmiButton
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={handleStartPostEdit}
+                                            disabled={isSavingPost || isDeletingPost}
+                                        >
+                                            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2-2h14a2 2 0 0 0 2-2v-7" />
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z" />
                                         </svg>
                                         Редагувати
                                     </AmiButton>
+                                    )}
                                     <AmiButton
                                         variant="danger"
                                         size="sm"
@@ -844,6 +852,13 @@ function PostDetail() {
                 </section>
             </AmiContainer>
             <Footer />
+            <DeleteConfirmation
+                open={deleteModalOpen}
+                title="Підтвердження видалення"
+                message="Вкажіть обов'язкову причину видалення та виберіть тип сповіщення для користувача."
+                onCancel={() => setDeleteModalOpen(false)}
+                onConfirm={(payload) => performDeletePost(payload)}
+            />
         </div>
     );
 }

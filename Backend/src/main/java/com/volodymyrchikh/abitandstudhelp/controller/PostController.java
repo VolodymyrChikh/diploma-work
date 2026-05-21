@@ -79,8 +79,9 @@ public class PostController {
     @PreAuthorize("@authorizationService.canManagePost(#id)")
     @DeleteMapping("/{id}")
     public void deleteById(@P("id") @PathVariable Long id,
-                           @RequestParam(required = false) String reason) {
-        postService.delete(id, reason);
+                           @RequestParam(required = false) String reason,
+                           @RequestParam(required = false) String notificationType) {
+        postService.delete(id, reason, notificationType);
     }
 
     @PreAuthorize("@authorizationService.isCurrentUserOrAdmin(#userId)")
