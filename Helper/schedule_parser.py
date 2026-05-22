@@ -13,10 +13,8 @@ from dotenv import load_dotenv
 
 app = FastAPI()
 
+# uvicorn schedule_parser:app --host 0.0.0.0 --port 9001 --reload
 
-# =========================
-# DTO / API response models
-# =========================
 load_dotenv()
 
 class Settings:
@@ -54,10 +52,6 @@ class ScheduleDocument(BaseModel):
     groups: list[str]
     entries: list[LessonEntry]
 
-
-# =========================
-# Normalization dictionaries
-# =========================
 
 LESSON_TYPE_MAP = {
     "лекція": "LECTURE",
@@ -98,10 +92,6 @@ TEACHER_PATTERN = re.compile(
     r"[А-ЯІЇЄҐ][а-яіїєґ'’\-]+(?:\s+[А-ЯІЇЄҐ]\.[А-ЯІЇЄҐ]\.)"
 )
 
-
-# =========================
-# Low-level helpers
-# =========================
 
 def normalize_spaces(text: str) -> str:
     return re.sub(r"[ \t]+", " ", text.replace("\xa0", " ")).strip()
@@ -147,10 +137,6 @@ def parse_pair_label(raw: str) -> tuple[str, int, str, str]:
 
 
 def extract_lines(page: pdfplumber.page.Page) -> tuple[list[dict], list[dict]]:
-    """
-    Table borders in these PDFs are drawn as thin filled rectangles.
-    We treat wide-thin rects as horizontal lines and tall-thin rects as vertical lines.
-    """
     hlines: list[dict] = []
     vlines: list[dict] = []
 
@@ -281,10 +267,6 @@ def meaningful_text(text: str) -> bool:
     return False
 
 
-# =========================
-# Mid-level parsing helpers
-# =========================
-
 def parse_meta_from_page(page: pdfplumber.page.Page) -> tuple[str | None, str | None]:
     text = page.extract_text() or ""
 
@@ -321,12 +303,6 @@ def extract_header_groups(page: pdfplumber.page.Page, table) -> list[dict]:
 
 
 def parse_lesson_block(raw_text: str) -> dict | None:
-    """
-    Heuristic parser:
-    - keeps raw_text always
-    - tries to derive subject / type / room / teachers
-    - if parsing is imperfect, raw_text is still available for downstream logic in Spring
-    """
     if not raw_text:
         return None
 
@@ -372,10 +348,6 @@ def parse_lesson_block(raw_text: str) -> dict | None:
         "raw_text": raw_text,
     }
 
-
-# =========================
-# Main parser
-# =========================
 
 def parse_schedule_pdf(path: str) -> ScheduleDocument:
     with pdfplumber.open(path) as pdf:
@@ -512,10 +484,6 @@ def parse_schedule_pdf(path: str) -> ScheduleDocument:
         )
 
 
-# =========================
-# FastAPI endpoint
-# =========================
-
 @app.post("/parse-schedule", response_model=ScheduleDocument)
 async def parse_schedule(file: UploadFile = File(...)) -> ScheduleDocument:
     if not file.filename or not file.filename.lower().endswith(".pdf"):
@@ -538,11 +506,6 @@ async def parse_schedule(file: UploadFile = File(...)) -> ScheduleDocument:
         if tmp_path and os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-
-# =========================
-# Local debug run
-# =========================
-# uvicorn schedule_parser:app --reload
 
 @app.get("/")
 async def root():

@@ -65,7 +65,9 @@ function Schedule() {
 	const [isParsing, setIsParsing] = useState(false);
 	const [isLoadingSchedule, setIsLoadingSchedule] = useState(true);
 	const [status, setStatus] = useState(null);
-	const [scheduleDoc, setScheduleDoc] = useState(null);
+	const [scheduleDocs, setScheduleDocs] = useState([]);
+	const [deleteTarget, setDeleteTarget] = useState(null);
+	const [isDeletingSchedule, setIsDeletingSchedule] = useState(false);
 	const [selectedGroup, setSelectedGroup] = useState('');
 	const [weekFilter, setWeekFilter] = useState('ALL');
 
@@ -81,7 +83,7 @@ function Schedule() {
 			});
 
 			if (response.status === 404) {
-				setScheduleDoc(null);
+				setScheduleDocs([]);
 				setStatus(createStatus('info', 'Розклад ще не завантажено.'));
 				return;
 			}
@@ -92,7 +94,7 @@ function Schedule() {
 			}
 
 			const data = await response.json();
-			setScheduleDoc(data);
+			setScheduleDocs(Array.isArray(data) ? data : [data]);
 			setStatus(null);
 		} catch (error) {
 			setStatus(createStatus('error', getErrorMessage(error, 'Не вдалося отримати розклад.')));
@@ -105,22 +107,28 @@ function Schedule() {
 		loadLatestSchedule();
 	}, []);
 
+	const allGroups = useMemo(() => {
+		const groups = new Set();
+		scheduleDocs.forEach((doc) => {
+			(doc.groups || []).forEach((g) => groups.add(normalizeGroupName(g)));
+		});
+		return Array.from(groups).filter(Boolean).sort();
+	}, [scheduleDocs]);
+
 	useEffect(() => {
-		if (!scheduleDoc?.groups?.length) {
+		if (!allGroups.length) {
 			return;
 		}
 
-		if (!scheduleDoc.groups.includes(selectedGroup)) {
-			setSelectedGroup(scheduleDoc.groups[0]);
+		if (!selectedGroup || !allGroups.includes(selectedGroup)) {
+			setSelectedGroup(allGroups[0]);
 		}
-	}, [scheduleDoc, selectedGroup]);
+	}, [allGroups, selectedGroup]);
 
 	const handleFileChange = (event) => {
 		const file = event.target.files?.[0] ?? null;
 		setSelectedFile(file);
 		setStatus(null);
-		setScheduleDoc(null);
-		setSelectedGroup('');
 		if (file) {
 			setFileName(file.name);
 		} else {
@@ -157,8 +165,13 @@ function Schedule() {
 			}
 
 			const data = await response.json();
-			setScheduleDoc(data);
-			setStatus(createStatus('success', 'Розклад успішно завантажено.'));
+			setScheduleDocs(Array.isArray(data) ? data : [data]);
+			setSelectedFile(null);
+			setFileName('Файл не вибрано');
+			// Clear file input
+			const fileInput = document.getElementById('scheduleFileInput');
+			if (fileInput) fileInput.value = '';
+			setStatus(createStatus('success', 'Розклад успішно додано.'));
 		} catch (error) {
 			setStatus(createStatus('error', getErrorMessage(error, 'Не вдалося прочитати PDF.')));
 		} finally {
@@ -166,16 +179,61 @@ function Schedule() {
 		}
 	};
 
-	const availableGroups = useMemo(() => {
-		return (scheduleDoc?.groups || []).map(normalizeGroupName).filter(Boolean);
-	}, [scheduleDoc]);
+	const handleDeleteSchedule = async (sourceFile) => {
+		setDeleteTarget(sourceFile);
+	};
+
+	const closeDeleteModal = () => {
+		if (isDeletingSchedule) {
+			return;
+		}
+
+		setDeleteTarget(null);
+	};
+
+	const confirmDeleteSchedule = async (event) => {
+		event.preventDefault();
+		if (!deleteTarget) {
+			return;
+		}
+
+		setIsDeletingSchedule(true);
+		try {
+			const response = await apiFetch(`/api/schedule/latest?sourceFile=${encodeURIComponent(deleteTarget)}`, {
+				method: 'DELETE',
+			});
+
+			if (!response.ok) {
+				const errorText = await response.text().catch(() => '');
+				throw new Error(errorText || `Помилка видалення: ${response.status}`);
+			}
+
+			const data = await response.json();
+			setScheduleDocs(Array.isArray(data) ? data : []);
+			setStatus(createStatus('info', 'Розклад успішно видалено.'));
+			setDeleteTarget(null);
+		} catch (error) {
+			setStatus(createStatus('error', getErrorMessage(error, 'Не вдалося видалити розклад.')));
+		} finally {
+			setIsDeletingSchedule(false);
+		}
+	};
+
+	const availableGroups = allGroups;
 
 	const filteredEntries = useMemo(() => {
-		if (!scheduleDoc?.entries?.length || !selectedGroup) {
+		if (!scheduleDocs.length || !selectedGroup) {
 			return [];
 		}
 
-		return scheduleDoc.entries
+		let combinedEntries = [];
+		scheduleDocs.forEach((doc) => {
+			if (doc.entries && Array.isArray(doc.entries)) {
+				combinedEntries = combinedEntries.concat(doc.entries);
+			}
+		});
+
+		return combinedEntries
 			.filter((entry) => entry.groups?.includes(selectedGroup))
 			.filter((entry) => weekFilter === 'ALL' || entry.week_type === weekFilter)
 			.sort((a, b) => {
@@ -203,7 +261,7 @@ function Schedule() {
 
 				return String(a.subject || '').localeCompare(String(b.subject || ''));
 			});
-	}, [scheduleDoc, selectedGroup, weekFilter]);
+	}, [scheduleDocs, selectedGroup, weekFilter]);
 
 	const entriesByDay = useMemo(() => {
 		const map = new Map();
@@ -247,6 +305,7 @@ function Schedule() {
 							<div className="flex flex-wrap items-center gap-3">
 								<label className="inline-flex min-h-12 items-center gap-3 rounded-ami border border-border bg-white px-4 text-sm/6 font-extrabold text-muted">
 									<input
+										id="scheduleFileInput"
 										type="file"
 										accept="application/pdf"
 										onChange={handleFileChange}
@@ -275,12 +334,31 @@ function Schedule() {
 							</p>
 						</div>
 
-						{scheduleDoc ? (
-							<div className="grid gap-3 rounded-ami border border-border bg-soft px-5 py-4 text-sm/6 font-extrabold text-ink">
-								<span className="text-xs/5 font-black uppercase tracking-wide text-muted">Метадані</span>
-								<span className="truncate">Файл: {scheduleDoc.source_file || '—'}</span>
-								<span>Семестр: {scheduleDoc.semester || '—'}</span>
-								<span>Навчальний рік: {scheduleDoc.academic_year || '—'}</span>
+						{scheduleDocs && scheduleDocs.length > 0 ? (
+							<div className="grid gap-3 rounded-ami border border-border bg-soft px-5 py-4 text-sm/6 font-extrabold text-ink max-h-64 overflow-y-auto">
+								<div className="flex justify-between items-start gap-4 pb-2 border-b border-border">
+									<span className="text-xs/5 font-black uppercase tracking-wide text-muted">Завантажені файли ({scheduleDocs.length})</span>
+								</div>
+								{scheduleDocs.map((doc, idx) => (
+									<div key={idx} className="flex flex-col gap-1 border-t border-border pt-2 mt-2 first:border-0 first:pt-0 first:mt-0">
+										<div className="flex justify-between items-center gap-2">
+											<span className="truncate font-bold">{doc.source_file || '—'}</span>
+											<button
+												type="button"
+												onClick={() => handleDeleteSchedule(doc.source_file)}
+												className="text-red-500 hover:text-red-700 transition shrink-0"
+												title="Видалити цей розклад"
+											>
+												<svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+													<path d="M3 6h18" />
+													<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+													<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+												</svg>
+											</button>
+										</div>
+										<span className="text-xs text-muted">Семестр: {doc.semester || '—'} | Рік: {doc.academic_year || '—'}</span>
+									</div>
+								))}
 							</div>
 						) : null}
 					</AmiPanel>
@@ -334,7 +412,7 @@ function Schedule() {
 						</div>
 					</div>
 
-					{!scheduleDoc && !isLoadingSchedule ? (
+					{!scheduleDocs.length && !isLoadingSchedule ? (
 						<div className="grid place-items-center gap-3 rounded-ami border border-dashed border-border bg-white/80 px-6 py-10 text-center">
 							<span className="grid size-12 place-items-center rounded-full bg-accent-soft text-accent" aria-hidden="true">
 								<svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -352,14 +430,14 @@ function Schedule() {
 						</div>
 					) : null}
 
-					{scheduleDoc && !selectedGroup ? (
+					{scheduleDocs.length > 0 && !selectedGroup ? (
 						<div className="grid place-items-center gap-3 rounded-ami border border-dashed border-border bg-white/80 px-6 py-10 text-center">
 							<h3 className="m-0 font-sans text-lg/7 font-black text-ink">Оберіть групу</h3>
 							<p className="m-0 max-w-md text-sm/6 font-bold text-muted">Після вибору групи з'явиться розклад пар.</p>
 						</div>
 					) : null}
 
-					{scheduleDoc && selectedGroup && filteredEntries.length === 0 ? (
+					{scheduleDocs.length > 0 && selectedGroup && filteredEntries.length === 0 ? (
 						<div className="grid place-items-center gap-3 rounded-ami border border-dashed border-border bg-white/80 px-6 py-10 text-center">
 							<h3 className="m-0 font-sans text-lg/7 font-black text-ink">Немає пар для вибраного тижня</h3>
 							<p className="m-0 max-w-md text-sm/6 font-bold text-muted">Спробуйте змінити тиждень або перевірити інший PDF.</p>
@@ -416,6 +494,43 @@ function Schedule() {
 					))}
 				</AmiPanel>
 			</AmiContainer>
+
+			{deleteTarget ? (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-[2px]">
+					<form
+						onSubmit={confirmDeleteSchedule}
+						className="w-full max-w-xl rounded-ami border border-border bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.22)]"
+					>
+						<div className="grid gap-2">
+							<span className="font-sans text-xs/5 font-black uppercase tracking-wide text-red-600">Підтвердження видалення</span>
+							<h3 className="m-0 font-sans text-2xl/8 font-black text-ink">Видалити розклад?</h3>
+							<p className="m-0 text-sm/6 font-bold text-muted">
+								Файл <strong className="text-ink">{deleteTarget}</strong> буде видалено.
+							</p>
+						</div>
+
+						<div className="mt-5 grid gap-2">
+							<p className="m-0 text-sm/6 font-bold text-muted">
+								Підтвердіть дію, якщо хочете остаточно видалити цей розклад.
+							</p>
+						</div>
+
+						<div className="mt-6 flex flex-wrap justify-end gap-3">
+							<button
+								type="button"
+								onClick={closeDeleteModal}
+								disabled={isDeletingSchedule}
+								className="inline-flex min-h-11 items-center gap-2 rounded-ami border border-border bg-white px-4 text-sm/6 font-black text-ink transition hover:bg-soft disabled:cursor-not-allowed disabled:opacity-60"
+							>
+								Скасувати
+							</button>
+							<AmiButton type="submit" loading={isDeletingSchedule}>
+								Видалити
+							</AmiButton>
+						</div>
+					</form>
+				</div>
+			) : null}
 
 			<Footer />
 		</div>

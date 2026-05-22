@@ -12,7 +12,8 @@ public enum ExamType {
     COURSEWORK("Курсова робота"),
     DIPLOMA("Дипломна робота"),
     MAGISTER("Магістерська робота"),
-    DIFFERENTIATED_CREDIT("Диференційований залік");
+    DIFFERENTIATED_CREDIT("Диференційований залік"),
+    OTHER("Немає");
 
     private final String displayName;
 

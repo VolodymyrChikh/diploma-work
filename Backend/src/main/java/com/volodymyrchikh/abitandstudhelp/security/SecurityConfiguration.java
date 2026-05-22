@@ -38,17 +38,24 @@ import java.util.List;
 public class SecurityConfiguration {
 
     private static final String DEFAULT_ALLOWED_ORIGIN_PATTERNS =
-            "http://localhost:9000,"
+            "http://localhost:9000," +
+                    "http://localhost:9001,"
                     + "http://localhost:3000,"
                     + "http://localhost:3001,"
+                    + "http://localhost:5173,"
+                    + "http://localhost:4173,"
                     + "http://127.0.0.1:3000,"
                     + "http://127.0.0.1:3001,"
+                    + "http://127.0.0.1:5173,"
                     + "http://192.168.*.*:3000,"
                     + "http://192.168.*.*:3001,"
+                    + "http://192.168.*.*:5173,"
                     + "http://10.*.*.*:3000,"
                     + "http://10.*.*.*:3001,"
                     + "http://172.*.*.*:3000,"
-                    + "http://172.*.*.*:3001";
+                    + "http://172.*.*.*:3001,"
+                    + "https://*.vercel.app,"
+                    + "https://*.run.app";
 
     private final UsersDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -149,7 +156,7 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(splitCsv(allowedOriginPatterns));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
 

@@ -29,4 +29,15 @@ public class ScheduleController {
     public JsonNode getLatestSchedule() throws java.io.IOException {
         return scheduleService.getLatestSchedule();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @org.springframework.web.bind.annotation.DeleteMapping("/latest")
+    public JsonNode deleteLatestSchedule(@RequestParam(value = "sourceFile", required = false) String sourceFile) throws java.io.IOException {
+        if (sourceFile != null && !sourceFile.isBlank()) {
+            return scheduleService.deleteScheduleBySourceFile(sourceFile);
+        } else {
+            scheduleService.deleteLatestSchedule();
+            return new com.fasterxml.jackson.databind.ObjectMapper().createArrayNode();
+        }
+    }
 }

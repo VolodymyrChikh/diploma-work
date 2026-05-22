@@ -48,14 +48,12 @@ public class NotificationService {
     }
 
     public Page<NotificationResponse> getAll(Pageable pageable, Predicate filter) {
-        if (!authorizationService.isCurrentUserAdmin()) {
-            String email = authorizationService.currentUserEmail()
-                    .orElseThrow(() -> new AccessDeniedException("Authenticated user is required"));
-            return notificationRepository.findAllByUserEmail(email, pageable)
-                    .map(notificationMapper::toResponse);
-        }
-
-        return notificationRepository.findAll(filter, pageable)
+        String email = authorizationService.currentUserEmail()
+                .orElseThrow(() -> new AccessDeniedException("Authenticated user is required"));
+        
+        // Return only the current user's notifications, regardless of admin status.
+        // Admins should not see system-wide notifications in their personal popup.
+        return notificationRepository.findAllByUserEmail(email, pageable)
                 .map(notificationMapper::toResponse);
     }
 

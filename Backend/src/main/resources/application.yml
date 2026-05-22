@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: abitandstudhelp-service
+  config:
+    activate:
+      on-profile: prod
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:}
   servlet:
@@ -25,7 +28,7 @@ spring:
       connection-test-query: SELECT 1
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

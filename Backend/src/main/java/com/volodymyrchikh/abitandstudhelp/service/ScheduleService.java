@@ -2,6 +2,7 @@ package com.volodymyrchikh.abitandstudhelp.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.volodymyrchikh.abitandstudhelp.common.ResourceType;
 import com.volodymyrchikh.abitandstudhelp.service.storage.ObjectStorageService;
 import com.volodymyrchikh.abitandstudhelp.service.storage.UploadFileValidator;
@@ -45,26 +46,84 @@ public class ScheduleService {
         }
 
         String scheduleFolder = resolveScheduleFolder(LocalDate.now());
-        String pdfKey = scheduleFolder + UUID.randomUUID() + "-" + originalFilename;
-        String jsonKey = scheduleFolder + "schedule.json";
+        String pdfId = UUID.randomUUID().toString();
+        String pdfKey = scheduleFolder + pdfId + "-" + originalFilename;
+        String jsonKey = scheduleFolder + pdfId + "-schedule.json";
 
         String parsedJson = parseScheduleWithHelper(file);
-
+        
         objectStorageService.uploadScheduleFile(file, pdfKey);
         objectStorageService.uploadScheduleJson(parsedJson, jsonKey);
-        objectStorageService.uploadScheduleJson(parsedJson, LATEST_SCHEDULE_KEY);
 
-        return objectMapper.readTree(parsedJson);
+        JsonNode newDoc = objectMapper.readTree(parsedJson);
+
+        ArrayNode schedulesNode;
+        try {
+            JsonNode latest = getLatestSchedule();
+            if (latest.isArray()) {
+                schedulesNode = (ArrayNode) latest;
+            } else {
+                schedulesNode = objectMapper.createArrayNode();
+                schedulesNode.add(latest);
+            }
+        } catch (org.springframework.web.server.ResponseStatusException e) {
+            schedulesNode = objectMapper.createArrayNode();
+        }
+
+        schedulesNode.add(newDoc);
+
+        objectStorageService.uploadScheduleJson(schedulesNode.toString(), LATEST_SCHEDULE_KEY);
+
+        return schedulesNode;
     }
 
     public JsonNode getLatestSchedule() throws IOException {
         try (var response = objectStorageService.downloadScheduleFile(LATEST_SCHEDULE_KEY)) {
             byte[] payload = response.readAllBytes();
             if (payload.length == 0) {
-                return objectMapper.createObjectNode();
+                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Розклад не знайдено");
             }
-            return objectMapper.readTree(payload);
+            JsonNode node = objectMapper.readTree(payload);
+            if (!node.isArray()) {
+                ArrayNode arr = objectMapper.createArrayNode();
+                arr.add(node);
+                return arr;
+            }
+            return node;
         }
+    }
+
+    public void deleteLatestSchedule() {
+        objectStorageService.deleteScheduleFileByKey(LATEST_SCHEDULE_KEY);
+    }
+
+    public JsonNode deleteScheduleBySourceFile(String sourceFile) throws IOException {
+        JsonNode latest = getLatestSchedule();
+        if (!latest.isArray()) {
+            return latest;
+        }
+
+        ArrayNode updatedArray = objectMapper.createArrayNode();
+        boolean removed = false;
+
+        for (JsonNode node : latest) {
+            String nodeSourceFile = node.path("source_file").asText("");
+            if (nodeSourceFile.equals(sourceFile)) {
+                removed = true;
+            } else {
+                updatedArray.add(node);
+            }
+        }
+
+        if (removed) {
+            if (updatedArray.isEmpty()) {
+                deleteLatestSchedule();
+            } else {
+                objectStorageService.uploadScheduleJson(updatedArray.toString(), LATEST_SCHEDULE_KEY);
+            }
+        }
+
+        return updatedArray;
     }
 
     private String parseScheduleWithHelper(MultipartFile file) throws IOException {

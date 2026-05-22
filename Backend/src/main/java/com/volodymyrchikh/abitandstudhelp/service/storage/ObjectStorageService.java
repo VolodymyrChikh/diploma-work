@@ -105,6 +105,13 @@ public class ObjectStorageService {
         deleteFileByKey(key);
     }
 
+    public void deleteScheduleFileByKey(String key) {
+        if (key == null || key.isBlank()) {
+            return;
+        }
+        deleteByKey(scheduleBucket, key);
+    }
+
     private void putObject(String targetBucket, String key, String contentType, byte[] payload) {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(targetBucket)
