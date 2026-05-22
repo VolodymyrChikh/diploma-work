@@ -104,29 +104,40 @@ public class CommentService {
     }
 
     public void delete(Long commentId) {
-        delete(commentId, null);
+        delete(commentId, null, null);
     }
 
-    public void delete(Long commentId, String deletionReason) {
+    public void delete(Long commentId, String deletionReason, String notificationTypeValue) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Коментар не знайдено", commentId));
 
         Long commentOwnerId = comment.getUser() != null ? comment.getUser().getId() : null;
         commentRepository.delete(comment);
 
-        // Notify the comment owner if it was deleted by an admin with a reason
         if (deletionReason != null && !deletionReason.isBlank() && commentOwnerId != null) {
-            notifyCommentOwnerAboutDeletion(commentOwnerId, deletionReason);
+            notifyCommentOwnerAboutDeletion(commentOwnerId, deletionReason, notificationTypeValue);
         }
     }
 
-    private void notifyCommentOwnerAboutDeletion(Long commentOwnerId, String deletionReason) {
+    private void notifyCommentOwnerAboutDeletion(Long commentOwnerId, String deletionReason, String notificationTypeValue) {
         NotificationRequest notificationRequest = NotificationRequest.builder()
-                .type(NotificationType.ADMIN_MESSAGE.getName())
+                .type(resolveNotificationType(notificationTypeValue).getName())
                 .message("Ваш коментар був видалений адміністратором. Причина: " + deletionReason)
                 .userId(commentOwnerId)
                 .build();
         notificationService.create(notificationRequest);
+    }
+
+    private NotificationType resolveNotificationType(String notificationTypeValue) {
+        if (notificationTypeValue == null || notificationTypeValue.isBlank()) {
+            return NotificationType.ADMIN_MESSAGE;
+        }
+
+        try {
+            return NotificationType.forValue(notificationTypeValue);
+        } catch (IllegalArgumentException ignored) {
+            return NotificationType.ADMIN_MESSAGE;
+        }
     }
 
     public void deleteByRules(Long commentId) {

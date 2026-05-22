@@ -1,6 +1,8 @@
 import PropsTypes from 'prop-types';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
+import { AuthContext } from '../../context/auth-context.js';
 import { cn } from '../../ui/cn.js';
+import DeleteConfirmation from '../DeleteConfirmation/DeleteConfirmation';
 
 function Comment({
     commentId,
@@ -14,6 +16,7 @@ function Comment({
     onEdit,
     onDelete,
 }) {
+    const { user } = useContext(AuthContext);
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(commentContent);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -48,13 +51,20 @@ function Comment({
     };
 
     const handleDelete = async () => {
-        if (window.confirm('Ви впевнені, що хочете видалити цей коментар?')) {
-            try {
-                await onDelete(commentId);
-                setShowDropdown(false);
-            } catch {
-                // The parent renders the user-facing error.
-            }
+        // open modal to collect optional reason
+        setShowDropdown(false);
+        setDeleteModalOpen(true);
+    };
+
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+    const performDelete = async ({ reason, notificationType }) => {
+        setDeleteModalOpen(false);
+        try {
+            await onDelete(commentId, reason, notificationType);
+            setShowDropdown(false);
+        } catch {
+            // parent will render error
         }
     };
 
@@ -65,6 +75,7 @@ function Comment({
     };
 
     return (
+        <>
         <article className="rounded-ami border border-border bg-white p-4 transition-[border-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-px hover:border-accent/40 hover:shadow-[0_4px_18px_rgb(15_23_42/0.06)] focus-within:border-accent/50 motion-reduce:hover:translate-y-0 sm:p-5">
             <header className="flex items-start gap-3">
                 <img
@@ -119,7 +130,7 @@ function Comment({
                     </div>
                 </div>
 
-                {isOwnComment && (
+                {(isOwnComment || user?.role === 'ROLE_ADMIN') && (
                     <div className="relative shrink-0" ref={dropdownRef}>
                         <button
                             type="button"
@@ -142,22 +153,24 @@ function Comment({
 
                         {showDropdown && (
                             <div role="menu" className="ami-elevated ami-popover-motion absolute right-0 top-full z-20 mt-2 min-w-44 overflow-hidden rounded-ami border border-border bg-white">
-                                <button
-                                    type="button"
-                                    role="menuitem"
-                                    onClick={() => {
-                                        setShowDropdown(false);
-                                        setIsEditing(true);
-                                    }}
-                                    className="inline-flex min-h-11 w-full items-center gap-2 border-0 bg-transparent px-4 text-left text-sm/6 font-black text-ink transition duration-200 hover:bg-soft hover:text-accent focus-visible:bg-soft focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-55"
-                                    disabled={isSaving || isDeleting}
-                                >
-                                    <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                        <path d="M12 20h9" />
-                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
-                                    </svg>
-                                    Редагувати
-                                </button>
+                                {isOwnComment && (
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        onClick={() => {
+                                            setShowDropdown(false);
+                                            setIsEditing(true);
+                                        }}
+                                        className="inline-flex min-h-11 w-full items-center gap-2 border-0 bg-transparent px-4 text-left text-sm/6 font-black text-ink transition duration-200 hover:bg-soft hover:text-accent focus-visible:bg-soft focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-55"
+                                        disabled={isSaving || isDeleting}
+                                    >
+                                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
+                                        </svg>
+                                        Редагувати
+                                    </button>
+                                )}
                                 <button
                                     type="button"
                                     role="menuitem"
@@ -180,6 +193,14 @@ function Comment({
                 )}
             </header>
         </article>
+        <DeleteConfirmation
+            open={deleteModalOpen}
+            title="Підтвердження видалення"
+            message="Вкажіть обов'язкову причину видалення та виберіть тип сповіщення для користувача."
+            onCancel={() => setDeleteModalOpen(false)}
+            onConfirm={(payload) => performDelete(payload)}
+        />
+        </>
     );
 }
 

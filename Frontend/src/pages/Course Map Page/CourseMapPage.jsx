@@ -29,19 +29,20 @@ const EXAM_TYPE_LABELS = {
     COURSEWORK: 'Курсова робота',
     DIPLOMA: 'Дипломна робота',
     MAGISTER: 'Магістерська робота',
-    DIFFERENTIATED_CREDIT: 'Диф. залік'
+    DIFFERENTIATED_CREDIT: 'Диф. залік',
+    OTHER: 'Немає'
 };
 
 const BLOCK_TYPE_STYLES = {
     HUMANITARIAN: 'border-amber-200 bg-amber-50 text-amber-800',
-    SCIENTIFIC: 'border-sky-200 bg-sky-50 text-sky-800',
+    SCIENTIFIC: 'border-purple-200 bg-purple-50 text-purple-800',
     PROFESSIONAL: 'border-blue-200 bg-blue-50 text-blue-800',
     PDFC: 'border-green-200 bg-green-50 text-green-800',
 };
 
 const BLOCK_TYPE_DOT = {
     HUMANITARIAN: 'bg-amber-400',
-    SCIENTIFIC: 'bg-sky-400',
+    SCIENTIFIC: 'bg-purple-500',
     PROFESSIONAL: 'bg-blue-400',
     PDFC: 'bg-green-400',
 };
@@ -172,7 +173,7 @@ function CourseMapPage() {
             return acc;
         }, {});
     }, [filteredSubjects]);
-
+    
     const semesters = degreeLevel === 'bachelor'
         ? [1, 2, 3, 4, 5, 6, 7, 8]
         : [1, 2, 3, 4];
@@ -259,11 +260,14 @@ function CourseMapPage() {
                                 {visibleSpecialties.length === 0 && (
                                     <option value="" disabled>Немає доступних спеціальностей</option>
                                 )}
-                                {visibleSpecialties.map((specialty) => (
-                                    <option key={specialty.id} value={specialty.id}>
-                                        {specialty.number} — {specialty.name}
-                                    </option>
-                                ))}
+                                {[...visibleSpecialties]
+                                    .sort((a, b) => a.number.localeCompare(b.number, 'uk'))
+                                    .map((specialty) => (
+                                        <option key={specialty.id} value={specialty.id}>
+                                            {specialty.number} — {specialty.name}
+                                        </option>
+                                    ))
+                                }
                             </select>
                         </div>
                     </div>
@@ -424,9 +428,9 @@ function CourseMapPage() {
                                                         </p>
                                                     )}
 
-                                                    {subject.description && (
+                                                    {/* {subject.description && (
                                                         <p className="m-0 mt-2 pl-1.5 text-sm/5 font-bold text-text">{subject.description}</p>
-                                                    )}
+                                                    )} */}
 
                                                     {subject.syllabusLink && (
                                                         <AmiButton

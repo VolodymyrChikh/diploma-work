@@ -16,7 +16,7 @@ const POSTS_PER_PAGE = 10;
 const SORT_FILTERS = ['Популярні', 'Нові', 'Старі'];
 const FORUM_GUIDE_ITEMS = [
     {
-        title: 'Пости студентів',
+        title: 'Дописи студентів',
         description: 'Запитання, поради й короткі обговорення без зайвої офіційності.',
     },
     {
