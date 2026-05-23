@@ -4,7 +4,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 # Збираємо проєкт без запуску тестів, щоб пришвидшити процес
-RUN mvc clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Етап 2: Легкий образ для запуску
 FROM eclipse-temurin:17-jre-jammy
