@@ -1,5 +1,7 @@
 package com.volodymyrchikh.abitandstudhelp.service;
 
+import com.volodymyrchikh.abitandstudhelp.domain.Lesson;
+import com.volodymyrchikh.abitandstudhelp.repository.LessonRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -33,10 +35,12 @@ public class ScheduleService {
     private final UploadFileValidator uploadFileValidator;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final LessonRepository lessonRepository;
 
     @Value("${schedule.parser-url}")
     private String parserUrl;
 
+    @org.springframework.transaction.annotation.Transactional
     public JsonNode uploadSchedule(MultipartFile file) throws IOException {
         uploadFileValidator.validateFiles(ResourceType.DOCUMENT, List.of(file));
 
@@ -74,6 +78,8 @@ public class ScheduleService {
 
         objectStorageService.uploadScheduleJson(schedulesNode.toString(), LATEST_SCHEDULE_KEY);
 
+        saveLessonsToDatabase(newDoc);
+
         return schedulesNode;
     }
 
@@ -93,10 +99,13 @@ public class ScheduleService {
         }
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteLatestSchedule() {
         objectStorageService.deleteScheduleFileByKey(LATEST_SCHEDULE_KEY);
+        lessonRepository.deleteAll();
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public JsonNode deleteScheduleBySourceFile(String sourceFile) throws IOException {
         JsonNode latest = getLatestSchedule();
         if (!latest.isArray()) {
@@ -116,6 +125,7 @@ public class ScheduleService {
         }
 
         if (removed) {
+            lessonRepository.deleteBySourceFile(sourceFile);
             if (updatedArray.isEmpty()) {
                 deleteLatestSchedule();
             } else {
@@ -147,6 +157,44 @@ public class ScheduleService {
             throw new IllegalStateException("Порожня відповідь від сервісу розбору розкладу");
         }
         return response;
+    }
+
+    private void saveLessonsToDatabase(JsonNode parsedDocNode) {
+        String academicYear = parsedDocNode.path("academic_year").asText(null);
+        String semester = parsedDocNode.path("semester").asText(null);
+        String sourceFile = parsedDocNode.path("source_file").asText(null);
+
+        JsonNode entries = parsedDocNode.path("entries");
+        if (entries.isArray()) {
+            java.util.List<Lesson> lessons = new java.util.ArrayList<>();
+            for (JsonNode entry : entries) {
+                JsonNode groupsNode = entry.path("groups");
+                if (groupsNode.isArray()) {
+                    for (JsonNode groupNode : groupsNode) {
+                        String groupName = groupNode.asText();
+                        Lesson lesson = Lesson.builder()
+                                .groupName(groupName)
+                                .academicYear(academicYear)
+                                .semester(semester)
+                                .dayOfWeek(entry.path("day").asText())
+                                .pairNumber(entry.path("pair_number").isNull() ? null : entry.path("pair_number").asInt())
+                                .pairLabel(entry.path("pair_label").asText(null))
+                                .timeStart(entry.path("time_start").asText(null))
+                                .timeEnd(entry.path("time_end").asText(null))
+                                .weekType(entry.path("week_type").asText("ALL"))
+                                .subjectName(entry.path("subject").asText(null))
+                                .lessonType(entry.path("lesson_type").asText(null))
+                                .room(entry.path("room").asText(null))
+                                .teachers(entry.path("teachers").toString())
+                                .rawText(entry.path("raw_text").asText(null))
+                                .sourceFile(sourceFile)
+                                .build();
+                        lessons.add(lesson);
+                    }
+                }
+            }
+            lessonRepository.saveAll(lessons);
+        }
     }
 
     private String resolveScheduleFolder(LocalDate date) {

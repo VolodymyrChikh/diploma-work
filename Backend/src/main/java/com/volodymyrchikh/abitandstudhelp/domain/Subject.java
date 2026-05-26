@@ -46,4 +46,8 @@ public class Subject {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "specialty_id")
     private Specialty specialty;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "selective_group_id")
+    private SelectiveGroup selectiveGroup;
 }

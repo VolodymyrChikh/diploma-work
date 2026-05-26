@@ -152,7 +152,7 @@ public class PostService {
     private void notifyPostOwnerAboutDeletion(Long postOwnerId, String deletionReason, String notificationTypeValue) {
         NotificationRequest notificationRequest = NotificationRequest.builder()
                 .type(resolveNotificationType(notificationTypeValue).getName())
-                .message("Ваш допис був видалений адміністратором. Причина: " + deletionReason)
+                .message("Ваш допис був видалений. Причина: " + deletionReason)
                 .userId(postOwnerId)
                 .build();
         notificationService.create(notificationRequest);

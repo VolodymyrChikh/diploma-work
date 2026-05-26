@@ -1,10 +1,7 @@
 package com.volodymyrchikh.abitandstudhelp.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,28 +12,32 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "specialties")
+@Table(name = "selective_groups")
 @EntityListeners(AuditingEntityListener.class)
-public class Specialty {
+public class SelectiveGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String name;
-    @Column(unique = true)
-    private String number;
-    private String about;
+    private Integer semester;
 
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "specialties", fetch = FetchType.LAZY)
-    private Set<SelectiveGroup> selectiveGroups = new HashSet<>();
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "selective_groups_specialties",
+            joinColumns = @JoinColumn(name = "selective_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialty_id")
+    )
+    private Set<Specialty> specialties = new HashSet<>();
 }

@@ -21,8 +21,8 @@ import { cn } from "../../ui/cn.js";
 
 const TABS = [
   { id: "personal", label: "Особисті дані", available: true },
-  { id: "security", label: "Безпека", available: false },
-  { id: "notifications", label: "Сповіщення", available: false },
+  // { id: "security", label: "Безпека", available: false },
+  // { id: "notifications", label: "Сповіщення", available: false },
 ];
 
 function Profile() {
@@ -429,7 +429,7 @@ function Profile() {
                 )}
 
                 <AmiPanel className="overflow-hidden">
-                  <div role="tablist" aria-label="Налаштування профілю" className="flex gap-1 overflow-x-auto border-b border-border bg-surface-strong px-3 pt-3 sm:px-5 sm:pt-4">
+                  <div role="tablist" aria-label="Налаштування профілю" className="flex gap-1 overflow-visible border-b border-border bg-surface-strong px-3 pt-3 sm:px-5 sm:pt-4">
                     {TABS.map((tab) => {
                       const isActive = activeTab === tab.id;
                       return (

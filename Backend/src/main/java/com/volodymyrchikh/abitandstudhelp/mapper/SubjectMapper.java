@@ -19,6 +19,7 @@ public interface SubjectMapper {
 
     @Mapping(target = "specialtyId", source = "specialty.id")
     @Mapping(target = "specialtyName", source = "specialty.name")
+    @Mapping(target = "selectiveGroupId", source = "selectiveGroup.id")
     SubjectResponse mapToSubjectResponse(Subject subject);
 
     @Mapping(target = "specialty", ignore = true)

@@ -24,6 +24,7 @@ public class SubjectRequest {
     @NotNull
     private ExamType examType;
     private DegreeLevel degreeLevel;
+    private Long selectiveGroupId;
 
 }
 

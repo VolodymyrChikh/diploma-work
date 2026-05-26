@@ -29,6 +29,7 @@ public class SubjectResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long specialtyId;
+    private Long selectiveGroupId;
     private DegreeLevel degreeLevel;
 
 }

@@ -1,4 +1,3 @@
-
 package com.volodymyrchikh.abitandstudhelp.service;
 
 import com.google.genai.Client;
@@ -8,11 +7,14 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -27,7 +29,7 @@ public class AiService {
 
     @PostConstruct
     public void init() {
-        String documentsContext = loadPdfDocuments();
+        String documentsContext = loadDocuments();
 
         String finalSystemPrompt = """
             Ти — суворий цифровий асистент для студентів. Твоя робота — відповідати ТІЛЬКИ на теми освіти та документів.
@@ -79,20 +81,42 @@ public class AiService {
         }
     }
 
-    private String loadPdfDocuments() {
+    private String loadDocuments() {
         StringBuilder fullText = new StringBuilder();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         try {
-            Resource[] resources = resolver.getResources("classpath:documents/*.pdf");
+            Resource[] resources = resolver.getResources("classpath:documents/*.*");
 
             for (Resource resource : resources) {
-                try (PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(resource.getInputStream()))) {
-                    PDFTextStripper stripper = new PDFTextStripper();
-                    String text = stripper.getText(document);
+                String filename = resource.getFilename();
+                if (filename == null) continue;
+                String lowerName = filename.toLowerCase();
+                try {
+                    String text = "";
+                    if (lowerName.endsWith(".pdf")) {
+                        try (PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(resource.getInputStream()))) {
+                            PDFTextStripper stripper = new PDFTextStripper();
+                            text = stripper.getText(document);
+                        }
+                    } else if (lowerName.endsWith(".docx")) {
+                        try (var is = resource.getInputStream();
+                             XWPFDocument doc = new XWPFDocument(is);
+                             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+                            text = extractor.getText();
+                        }
+                    } else if (lowerName.endsWith(".txt")) {
+                        try (var is = resource.getInputStream()) {
+                            text = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                        }
+                    } else {
+                        continue;
+                    }
 
-                    fullText.append("\n--- Document: ").append(resource.getFilename()).append(" ---\n");
+                    fullText.append("\n--- Document: ").append(filename).append(" ---\n");
                     fullText.append(text).append("\n");
+                } catch (Exception ex) {
+                    System.err.println("Error reading file " + filename + ": " + ex.getMessage());
                 }
             }
         } catch (IOException e) {

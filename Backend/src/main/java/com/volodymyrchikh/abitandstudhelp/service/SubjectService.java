@@ -10,6 +10,8 @@ import com.volodymyrchikh.abitandstudhelp.exception.SpecialtyNotFoundException;
 import com.volodymyrchikh.abitandstudhelp.mapper.SubjectMapper;
 import com.volodymyrchikh.abitandstudhelp.repository.SpecialtyRepository;
 import com.volodymyrchikh.abitandstudhelp.repository.SubjectRepository;
+import com.volodymyrchikh.abitandstudhelp.domain.SelectiveGroup;
+import com.volodymyrchikh.abitandstudhelp.repository.SelectiveGroupRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ public class SubjectService {
 
     private final SubjectRepository subjectRepository;
     private final SpecialtyRepository specialtyRepository;
+    private final SelectiveGroupRepository selectiveGroupRepository;
     private final SubjectMapper subjectMapper;
 
     public SubjectResponse create(SubjectRequest request) {
@@ -30,6 +33,12 @@ public class SubjectService {
             subject.setDegreeLevel(DegreeLevel.BACHELOR);
         }
         subject.setSpecialty(getSpecialtyById(request.getSpecialtyId()));
+        if (request.getSelectiveGroupId() != null) {
+            subject.setSelectiveGroup(selectiveGroupRepository.findById(request.getSelectiveGroupId())
+                    .orElseThrow(() -> new EntityNotFoundException("Selective group not found with id " + request.getSelectiveGroupId())));
+        } else {
+            subject.setSelectiveGroup(null);
+        }
         return subjectMapper.mapToSubjectResponse(subjectRepository.save(subject));
     }
 
@@ -52,6 +61,12 @@ public class SubjectService {
             existing.setDegreeLevel(DegreeLevel.BACHELOR);
         }
         existing.setSpecialty(getSpecialtyById(request.getSpecialtyId()));
+        if (request.getSelectiveGroupId() != null) {
+            existing.setSelectiveGroup(selectiveGroupRepository.findById(request.getSelectiveGroupId())
+                    .orElseThrow(() -> new EntityNotFoundException("Selective group not found with id " + request.getSelectiveGroupId())));
+        } else {
+            existing.setSelectiveGroup(null);
+        }
         return subjectMapper.mapToSubjectResponse(subjectRepository.save(existing));
     }
 

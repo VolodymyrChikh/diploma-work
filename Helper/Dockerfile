@@ -2,14 +2,19 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Заборонoutput буферизації логів (щоб відразу бачити принти в Docker Desktop)
-ENV PYTHONUNBUFFERED=1
+# Системні залежності (якщо твій парсер розкладу використовує якісь специфічні ліби)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
+# Копіюємо та встановлюємо залежності Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Копіюємо весь код додатка
 COPY . .
 
-EXPOSE 8000
-# Використовуємо змінну $PORT, яку виставлятиме Docker Compose або Google Cloud Run
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Render сам передасть порт у змінну PORT, тому біндимо Uvicorn на неї
+EXPOSE 9001
+
+ENTRYPOINT ["sh", "-c", "uvicorn schedule_parser:app --host 0.0.0.0 --port ${PORT:-9001}"]

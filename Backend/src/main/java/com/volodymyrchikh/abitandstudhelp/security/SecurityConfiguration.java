@@ -118,7 +118,8 @@ public class SecurityConfiguration {
                                 "/subjects/**",
                                 "/faqs/**",
                                 "/api/media/**",
-                                "/api/schedule/**"
+                                "/api/schedule/**",
+                                "/api/lessons/**"
                         ).permitAll()
                         .requestMatchers("/ai/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/media/*/increment-views").permitAll()
