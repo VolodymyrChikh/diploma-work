@@ -2,6 +2,7 @@ package com.volodymyrchikh.abitandstudhelp.service;
 
 import com.querydsl.core.types.Predicate;
 import com.volodymyrchikh.abitandstudhelp.common.Role;
+import com.volodymyrchikh.abitandstudhelp.domain.AcademicGroup;
 import com.volodymyrchikh.abitandstudhelp.domain.Specialty;
 import com.volodymyrchikh.abitandstudhelp.domain.User;
 import com.volodymyrchikh.abitandstudhelp.dto.RegisterRequest;
@@ -10,9 +11,11 @@ import com.volodymyrchikh.abitandstudhelp.dto.UpdateUserRequest;
 import com.volodymyrchikh.abitandstudhelp.dto.UserResponse;
 import com.volodymyrchikh.abitandstudhelp.common.ResourceType;
 import com.volodymyrchikh.abitandstudhelp.exception.SpecialtyNotFoundException;
+import com.volodymyrchikh.abitandstudhelp.exception.GroupNotFoundException;
 import com.volodymyrchikh.abitandstudhelp.exception.UserNotFoundException;
 import com.volodymyrchikh.abitandstudhelp.exception.WrongCredentialsException;
 import com.volodymyrchikh.abitandstudhelp.mapper.UserMapper;
+import com.volodymyrchikh.abitandstudhelp.repository.AcademicGroupRepository;
 import com.volodymyrchikh.abitandstudhelp.repository.SpecialtyRepository;
 import com.volodymyrchikh.abitandstudhelp.repository.UserRepository;
 import com.volodymyrchikh.abitandstudhelp.security.UsersDetails;
@@ -36,6 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final SpecialtyRepository specialtyRepository;
+    private final AcademicGroupRepository academicGroupRepository;
     private final PasswordEncoder passwordEncoder;
     private final ObjectStorageService objectStorageService;
     private final UploadFileValidator uploadFileValidator;
@@ -93,6 +97,14 @@ public class UserService {
                     .orElseThrow(() -> new SpecialtyNotFoundException("Specialty of id=[%s] not found"
                             .formatted(request.getSpecialtyId()), request.getSpecialtyId(), null));
             toUpdateUser.setSpecialty(specialty);
+        }
+
+        if (request.getGroupId() != null) {
+            AcademicGroup academicGroup = academicGroupRepository.findById(request.getGroupId())
+                    .orElseThrow(() -> new GroupNotFoundException("Групу з id " + request.getGroupId() + " не знайдено", String.valueOf(request.getGroupId())));
+            toUpdateUser.setGroup(academicGroup);
+        } else {
+            toUpdateUser.setGroup(null);
         }
 
         User newUser = userRepository.save(userMapper.updateUser(toUpdateUser, request));

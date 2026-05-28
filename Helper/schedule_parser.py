@@ -68,8 +68,7 @@ DAY_ALIASES = {
     "вівторок": "Вівторок",
     "середа": "Середа",
     "четвер": "Четвер",
-    "п’ятниця": "П’ятниця",
-    "п'ятниця": "П’ятниця",
+    "пятниця": "П'ятниця",  # Ключ без апострофа, значення - правильне
     "субота": "Субота",
     "неділя": "Неділя",
 }
@@ -107,15 +106,20 @@ def normalize_day(raw: str | None) -> str | None:
     if not raw:
         return None
 
-    txt = raw.replace("\n", "").replace(" ", "").replace("’", "'").lower()
+    # Залишаємо виключно українські літери у нижньому регістрі.
+    # Це автоматично "вб'є" всі пробіли, апострофи, цифри, переноси та невидимі символи.
+    txt = re.sub(r"[^а-яіїєґ]", "", raw.lower())
+    
+    # Тепер рядок гарантовано чистий (наприклад, "яцинтяп"). 
+    # Робимо 2 варіанти: прямий і перевернутий
     candidates = [txt, txt[::-1]]
 
     for candidate in candidates:
         for key, value in DAY_ALIASES.items():
-            if key.replace(" ", "") in candidate:
+            if key in candidate:
                 return value
 
-    return raw
+    return raw.strip()
 
 
 def parse_pair_label(raw: str) -> tuple[str, int, str, str]:

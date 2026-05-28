@@ -22,9 +22,36 @@ public class LessonService {
 
     @Transactional(readOnly = true)
     public List<LessonDto> getLessonsByGroup(String groupName) {
-        return lessonRepository.findByGroupName(groupName).stream()
+        if (groupName == null || groupName.isBlank()) {
+            return List.of();
+        }
+
+        String target = normalizeGroupName(groupName);
+
+        return lessonRepository.findAll().stream()
+                .filter(l -> {
+                    String lg = l.getGroupName();
+                    if (lg == null) return false;
+                    return normalizeGroupName(lg).equals(target);
+                })
                 .map(lessonMapper::mapToResponse)
                 .toList();
+    }
+
+    private String normalizeGroupName(String raw) {
+        if (raw == null) return "";
+        String s = raw.trim().toUpperCase();
+        // normalize various dash types to ASCII hyphen
+        s = s.replace('\u2013', '-').replace('\u2014', '-').replace('\u2212', '-');
+        // replace any sequence of whitespace around hyphen with single hyphen
+        s = s.replaceAll("\\s*[-–—\\u2013\\u2014\\u2212]\\s*", "-");
+        // remove any characters that are not letters, digits or hyphen
+        s = s.replaceAll("[^\\p{L}\\p{Nd}-]", "");
+        // if there are trailing letters after digits (like '11С'), remove them
+        s = s.replaceAll("(?<=\\d)[\\p{L}]+$", "");
+        // trim possible leading/trailing hyphens
+        s = s.replaceAll("(^-+|-+$)", "");
+        return s;
     }
 
     @Transactional(readOnly = true)

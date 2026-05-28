@@ -26,7 +26,7 @@ public class UpdateUserRequest {
 
     private String avatarLink;
 
-    private String groupName;
+    private Long groupId;
 
     @Size(max = 500, message = "Розмір опису про себе не може перевищувати 500 символів")
     private String bio;

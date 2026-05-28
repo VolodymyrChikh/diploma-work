@@ -29,8 +29,9 @@ public class User {
     private String password;
     private String avatarLink;
 
-    @Enumerated(EnumType.STRING)
-    private StudentGroup groupName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private AcademicGroup group;
 
     @Column(length = 500)
     private String bio;

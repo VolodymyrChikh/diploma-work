@@ -34,7 +34,7 @@ const LESSON_TYPE_BADGE = {
 	PRACTICAL: 'bg-orange-50 text-orange-800 border-orange-200',
 };
 
-const DAY_ORDER = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П’ятниця', 'Субота', 'Неділя'];
+const DAY_ORDER = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', "П'ятниця", 'Субота', 'Неділя'];
 
 function normalizeGroupName(value) {
 	return String(value || '').trim();
